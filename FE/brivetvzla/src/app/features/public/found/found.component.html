@@ -1,50 +1,59 @@
 <div class="wrap page-pad">
-  <h1 class="page-h1">🟢 Mascotas Encontradas</h1>
-  <p class="lead">Animales encontrados durante la emergencia que esperan ser reclamados por sus dueños.</p>
+  <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">
+    <span class="dot" style="background:var(--found);box-shadow:0 0 0 5px rgba(47,158,99,.16)"></span>
+    <span class="eyebrow" style="color:var(--found)">Mascotas encontradas</span>
+  </div>
+  <h1 class="page-h1">Animales a salvo, buscando a su familia</h1>
+  <p class="lead">Estos animales fueron rescatados por la comunidad. Si alguno es tuyo o de alguien que conoces,
+    escríbenos.</p>
 
   <div class="filterbar">
     <div class="chips">
-      <button class="chip" [class.active]="filter()==='all'"   [class.teal]="filter()==='all'"   (click)="setFilter('all')">Todos</button>
-      <button class="chip" [class.active]="filter()==='dog'"   [class.teal]="filter()==='dog'"   (click)="setFilter('dog')">🐕 Perros</button>
-      <button class="chip" [class.active]="filter()==='cat'"   [class.teal]="filter()==='cat'"   (click)="setFilter('cat')">🐈 Gatos</button>
-      <button class="chip" [class.active]="filter()==='other'" [class.teal]="filter()==='other'" (click)="setFilter('other')">Otros</button>
+      <button class="chip" [class.active]="filter()==='all'" [class.teal]="filter()==='all'"
+        (click)="setFilter('all')">Todos</button>
+      <button class="chip" [class.active]="filter()==='dog'" [class.teal]="filter()==='dog'"
+        (click)="setFilter('dog')">🐕 Perro</button>
+      <button class="chip" [class.active]="filter()==='cat'" [class.teal]="filter()==='cat'"
+        (click)="setFilter('cat')">🐈 Gato</button>
+      <button class="chip" [class.active]="filter()==='other'" [class.teal]="filter()==='other'"
+        (click)="setFilter('other')">Otro</button>
     </div>
     <div class="divider"></div>
     <div class="search">
-      <i>🔍</i>
-      <input type="text" placeholder="Buscar por zona…" (input)="onSearch($event)">
+      <i>📍</i>
+      <input type="text" placeholder="Ciudad o estado..." (input)="onSearch($event)">
     </div>
     <span class="count">{{ filtered().length }} reportes</span>
   </div>
 
   <div class="grid">
     @for (a of filtered(); track a.zone + a.time) {
-      <div class="pet">
-        <div class="photo" [style.background]="a.color">
-          <span class="pw">{{ a.icon }}</span>
-          <span class="badge found">● ENCONTRADA</span>
-          <span class="statuschip">{{ a.status }}</span>
+    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer">
+      <div class="photo" [style.background]="a.color">
+        <span class="pw">🐾</span>
+        <span class="badge found">🟢 ENCONTRADO</span>
+        <span class="statuschip">{{ a.status }}</span>
+      </div>
+      <div class="body">
+        <div class="title">
+          <div class="pname">{{ a.name }}</div>
+          <span class="sp">{{ a.especie }}</span>
         </div>
-        <div class="body">
-          <div class="title">
-            <span class="pname">{{ a.name }}</span>
-            <span class="sp">{{ a.breed }}</span>
-          </div>
-          <div class="meta">📍 {{ a.zone }}, {{ a.state }}</div>
-          <div class="meta t">🕐 {{ a.time }}</div>
-          <div class="actions">
-            <button class="act call">📞 Llamar</button>
-            <button class="act wa">💬 WhatsApp</button>
-          </div>
-          <button class="share">↗ Compartir</button>
+        <div class="breed">{{ a.breed }}</div>
+        <div class="meta">📍 {{ a.zone }}, {{ a.state }}</div>
+        <div class="meta t">🕐 {{ a.time }}</div>
+        <div
+          style="margin-top:10px;font-size:12.5px;font-weight:600;color:var(--newteal);display:flex;align-items:center;gap:4px">
+          Ver más info →
         </div>
       </div>
+    </div>
     }
     @empty {
-      <div class="empty">
-        <div class="ico">🔍</div>
-        <p>No hay reportes que coincidan con tu búsqueda.</p>
-      </div>
+    <div class="empty">
+      <div class="ico">🔍</div>
+      <p>No hay reportes que coincidan con tu búsqueda.</p>
+    </div>
     }
   </div>
 </div>

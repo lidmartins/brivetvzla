@@ -12,9 +12,9 @@ export class FoundComponent {
   search = signal('');
 
   animals = [
-    { name: 'Desconocido', species: 'cat', breed: 'Mestizo', state: 'La Guaira', zone: 'Maiquetía', time: 'Hace 5h', color: '#F0FDF4', icon: '🐈', status: 'En refugio' },
-    { name: 'Desconocido', species: 'dog', breed: 'Mestizo', state: 'Vargas', zone: 'La Guaira', time: 'Hace 9h', color: '#F0FDF4', icon: '🐕', status: 'En refugio' },
-    { name: 'Desconocido', species: 'dog', breed: 'Pequeño', state: 'Miranda', zone: 'Guarenas', time: 'Hace 1d', color: '#F0FDF4', icon: '🐕', status: 'En cuidado' },
+    { name: 'Desconocido', species: 'cat', especie: 'gato', breed: 'Mestizo', state: 'La Guaira', zone: 'Maiquetía', time: 'Hace 5h', color: '#F0FDF4', icon: '🐈', status: '🏠 En refugio' },
+    { name: 'Desconocido', species: 'dog', especie: 'perro', breed: 'Mestizo', state: 'Vargas', zone: 'La Guaira', time: 'Hace 9h', color: '#F0FDF4', icon: '🐕', status: '🏠 En mi casa' },
+    { name: 'Desconocido', species: 'dog', especie: 'perro', breed: 'Pequeño', state: 'Miranda', zone: 'Guarenas', time: 'Hace 1d', color: '#F0FDF4', icon: '🐕', status: '🩺 En veterinaria' },
   ];
 
   filtered = computed(() => {
