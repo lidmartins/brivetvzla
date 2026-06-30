@@ -38,7 +38,7 @@ docker compose version    # Docker Compose version v2+
 docker compose up
 ```
 
-The app will be available at **http://localhost:4200**.
+The app will be available at **http://localhost:4300**.
 
 > The first run takes a few minutes — Docker pulls the `node:20` image and runs `npm install` inside the container. Subsequent starts are faster because `node_modules` persists via the volume mount.
 
@@ -61,7 +61,7 @@ npm install
 ng serve
 ```
 
-The app will be available at **http://localhost:4200**.
+The app will be available at **http://localhost:4300**.
 
 ---
 

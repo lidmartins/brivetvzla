@@ -12,10 +12,10 @@ export class LostComponent {
   search = signal('');
 
   animals = [
-    { name: 'Luna', species: 'dog', breed: 'Golden Retriever', state: 'Distrito Capital', zone: 'Caracas', time: 'Hace 3h', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
-    { name: 'Max',  species: 'dog', breed: 'Labrador', state: 'Miranda', zone: 'Los Teques', time: 'Hace 7h', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
-    { name: 'Misi', species: 'cat', breed: 'Mestizo', state: 'La Guaira', zone: 'Maiquetía', time: 'Hace 1d', color: '#FFF8F0', icon: '🐈', status: 'Buscando' },
-    { name: 'Coco', species: 'dog', breed: 'Beagle', state: 'Carabobo', zone: 'Valencia', time: 'Hace 2d', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
+    { name: 'Luna', species: 'dog', especie: 'perro', breed: 'Golden Retriever', state: 'Distrito Capital', zone: 'Caracas', time: 'Hace 3h', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
+    { name: 'Max', species: 'dog', especie: 'perro', breed: 'Labrador', state: 'Miranda', zone: 'Los Teques', time: 'Hace 7h', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
+    { name: 'Misi', species: 'cat', especie: 'gato', breed: 'Mestizo', state: 'La Guaira', zone: 'Maiquetía', time: 'Hace 1d', color: '#FFF8F0', icon: '🐈', status: 'Buscando' },
+    { name: 'Coco', species: 'dog', especie: 'perro', breed: 'Beagle', state: 'Carabobo', zone: 'Valencia', time: 'Hace 2d', color: '#FEF2F2', icon: '🐕', status: 'Buscando' },
   ];
 
   filtered = computed(() => {

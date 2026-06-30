@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AnimalService } from './core/services/animal.service';
 import { CreateAnimalRequest } from './shared/models/animal.model';
@@ -13,6 +13,15 @@ import { CreateAnimalRequest } from './shared/models/animal.model';
 export class AppComponent {
   private fb         = inject(FormBuilder);
   private animalSvc  = inject(AnimalService);
+  private router     = inject(Router);
+
+  isHome = signal(false);
+
+  constructor() {
+    this.router.events.subscribe(() => {
+      this.isHome.set(this.router.url === '/' || this.router.url === '/home');
+    });
+  }
 
   showModal     = false;
   submitting    = signal(false);
