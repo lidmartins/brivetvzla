@@ -34,7 +34,7 @@ docker compose version    # Docker Compose version v2+
 ### With Docker
 
 ```bash
-# From this directory (FE/vetsporvzla)
+# From this directory (FE/brivetvzla)
 docker compose up
 ```
 

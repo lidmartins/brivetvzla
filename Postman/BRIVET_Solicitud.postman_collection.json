@@ -1,0 +1,305 @@
+{
+  "info": {
+    "name": "BRIVET - Solicitud (createSolicitud + searchSolicitudes)",
+    "description": "Pruebas de integración para los endpoints públicos de reporte y búsqueda de mascotas perdidas/encontradas. No requieren autenticación.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "estadoId_valido",
+      "value": "1",
+      "type": "string",
+      "description": "Amazonas, según seed data. Cambiar si se usa otra BD."
+    }
+  ],
+  "item": [
+    {
+      "name": "1. createSolicitud",
+      "item": [
+        {
+          "name": "POST /solicitud - Mascota PERDIDA con foto (happy path)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Firulais\",\n    \"especie\": \"PERRO\",\n    \"raza\": \"Mestizo\",\n    \"color\": \"Marrón\",\n    \"tamanio\": \"MEDIANO\",\n    \"sexo\": \"MACHO\",\n    \"edadAproximada\": 3,\n    \"descripcion\": \"Tiene una mancha blanca en el pecho\",\n    \"requiereAtencionMedica\": false\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Caracas\",\n    \"direccion\": \"Av. Principal, Sector X\",\n    \"referencia\": \"Cerca de la plaza\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Ana\",\n    \"apellido\": \"Martins\",\n    \"email\": \"ana@test.com\",\n    \"telefono\": \"+584121234567\",\n    \"whatsapp\": \"+584121234567\",\n    \"metodoContacto\": \"WHATSAPP\",\n    \"permitirDatosPublicos\": true\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "fotos",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "Caso exitoso: reporta una mascota perdida con una foto adjunta. Debe responder 200 con el objeto Solicitud completo (animal, contacto, ubicacion anidados), incluyendo mainPhotoUrl con la URL de S3. El campo 'fotos' es un file picker en Postman - seleccionar manualmente un archivo de imagen antes de enviar."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /solicitud - Mascota ENCONTRADA sin foto (happy path)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"ENCONTRADA\",\n  \"animal\": {\n    \"nombre\": null,\n    \"especie\": \"GATO\",\n    \"raza\": \"Común europeo\",\n    \"color\": \"Gris atigrado\",\n    \"tamanio\": \"PEQUENO\",\n    \"sexo\": null,\n    \"edadAproximada\": 1,\n    \"descripcion\": \"Gatito encontrado cerca del estacionamiento, sin collar\",\n    \"requiereAtencionMedica\": true\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Caracas\",\n    \"direccion\": \"Centro Comercial Sambil, estacionamiento nivel 2\",\n    \"referencia\": \"Cerca de la entrada principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"José\",\n    \"apellido\": \"Rodríguez\",\n    \"email\": \"jose@test.com\",\n    \"telefono\": \"+584129876543\",\n    \"whatsapp\": \"+584129876543\",\n    \"metodoContacto\": \"WHATSAPP\",\n    \"permitirDatosPublicos\": true\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "Caso exitoso sin foto: el campo 'fotos' es opcional según el DTO. Debe responder 200 con el objeto Solicitud completo, pero mainPhotoUrl debe venir vacío o null ya que no se subió ninguna imagen. Nota: nombre y sexo van null intencionalmente, ya que en mascotas encontradas suelen ser desconocidos."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /solicitud - Error: falta campo obligatorio (contacto.email)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Luna\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"MEDIANO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Maracay\",\n    \"direccion\": \"Calle Principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"María\",\n    \"apellido\": \"González\",\n    \"telefono\": \"+584121111111\",\n    \"whatsapp\": \"+584121111111\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "Caso de error de validación: contacto.email es @NotBlank en ContactoRequest pero se omite. Debe responder 400 Bad Request con detalle del campo inválido (manejado por el handler de validación de Spring, vía @Valid en el controller)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /solicitud - Error: estadoId inexistente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Rocky\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"GRANDE\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": 9999,\n    \"ciudad\": \"Ciudad Inventada\",\n    \"direccion\": \"Calle Falsa 123\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Pedro\",\n    \"apellido\": \"Pérez\",\n    \"email\": \"pedro@test.com\",\n    \"telefono\": \"+584125555555\",\n    \"whatsapp\": \"+584125555555\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "Caso de error de negocio: estadoId 9999 no existe en la tabla estado. Debe responder 500 Internal Server Error (manejado por GlobalExceptionHandler) con mensaje 'Estado no encontrado: 9999', ya que SolicitudService lanza IllegalArgumentException vía orElseThrow()."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /solicitud - Error: tipoSolicitud inválido (enum)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"DESAPARECIDA\",\n  \"animal\": {\n    \"nombre\": \"Toby\",\n    \"especie\": \"PERRO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Valencia\",\n    \"direccion\": \"Av. Bolívar\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Luis\",\n    \"apellido\": \"Díaz\",\n    \"email\": \"luis@test.com\",\n    \"telefono\": \"+584123333333\",\n    \"whatsapp\": \"+584123333333\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "Caso de error de deserialización: 'DESAPARECIDA' no es un valor válido del enum TipoSolicitud (solo PERDIDA o ENCONTRADA). Debe responder 400 Bad Request, ya que Jackson falla al deserializar el enum antes incluso de llegar a las validaciones de Bean Validation."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. searchSolicitudes",
+      "item": [
+        {
+          "name": "GET /solicitud/search - Solo tipo (todas las perdidas)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" }
+              ]
+            },
+            "description": "Caso exitoso básico: lista todas las mascotas perdidas, sin filtros adicionales. Debe responder 200 con un array de Solicitud (puede estar vacío si no hay datos), excluyendo las de estado 'R' (rechazada)."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Tipo + especie (perros perdidos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&especie=PERRO",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "especie", "value": "PERRO" }
+              ]
+            },
+            "description": "Filtro combinado tipo + especie. Debe responder 200 solo con solicitudes donde animal.especie = 'P'."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Tipo + ciudad (encontradas en Caracas)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=ENCONTRADA&ciudad=Caracas",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "ENCONTRADA" },
+                { "key": "ciudad", "value": "Caracas" }
+              ]
+            },
+            "description": "Filtro de búsqueda parcial case-insensitive sobre ubicacion.ciudad. 'caracas', 'CARACAS' o 'Caracas' deben devolver el mismo resultado."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Tipo + estadoId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&estadoId={{estadoId_valido}}",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "estadoId", "value": "{{estadoId_valido}}" }
+              ]
+            },
+            "description": "Filtro por estado venezolano (FK ubicacion.estado.id). Debe responder 200 solo con solicitudes ubicadas en ese estado."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Todos los filtros combinados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&especie=GATO&estadoId={{estadoId_valido}}&ciudad=Caracas",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "especie", "value": "GATO" },
+                { "key": "estadoId", "value": "{{estadoId_valido}}" },
+                { "key": "ciudad", "value": "Caracas" }
+              ]
+            },
+            "description": "Los 4 filtros aplicados a la vez. Útil para validar que el AND de todas las condiciones funciona correctamente en el query JPQL."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Error: falta el parámetro obligatorio 'tipo'",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?ciudad=Caracas",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "ciudad", "value": "Caracas" }
+              ]
+            },
+            "description": "Caso de error: 'tipo' es @RequestParam obligatorio (sin required=false) en el controller. Debe responder 400 Bad Request indicando que falta el parámetro requerido 'tipo'."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Error: tipo con valor inválido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=ROBADA",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "ROBADA" }
+              ]
+            },
+            "description": "Caso de error: 'ROBADA' no es un valor del enum TipoSolicitud. Debe responder 400 Bad Request, ya que Spring no puede convertir el query param al enum esperado."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /solicitud/search - Sin resultados (estado inexistente)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&estadoId=9999",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "estadoId", "value": "9999" }
+              ]
+            },
+            "description": "Caso límite (no es técnicamente un error): estadoId 9999 no existe, pero a diferencia de createSolicitud, search NO valida que el estado exista - simplemente no habrá coincidencias. Debe responder 200 con un array vacío []."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

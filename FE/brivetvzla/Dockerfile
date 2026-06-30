@@ -7,6 +7,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 4200
+EXPOSE 4300
 
-CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--poll", "500"]
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4300", "--poll", "500"]
+

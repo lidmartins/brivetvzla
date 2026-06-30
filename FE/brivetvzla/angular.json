@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "vetsporvzla": {
+    "brivetvzla": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/vetsporvzla",
+            "outputPath": "dist/brivetvzla",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "vetsporvzla:build:production"
+              "buildTarget": "brivetvzla:build:production"
             },
             "development": {
-              "buildTarget": "vetsporvzla:build:development"
+              "buildTarget": "brivetvzla:build:development"
             }
           },
           "defaultConfiguration": "development"
