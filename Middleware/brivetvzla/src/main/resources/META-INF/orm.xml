@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+                     https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
+                 version="3.0">
+
+    <!-- ============================================================
+         Solicitud
+         ============================================================ -->
+
+    <named-query name="Solicitud.search">
+        <query>
+            SELECT s FROM Solicitud s
+            JOIN FETCH s.animal a
+            JOIN FETCH s.contacto c
+            JOIN FETCH s.ubicacion u
+            JOIN FETCH u.estado e
+            WHERE s.tipo = :tipo
+            AND s.estado &lt;&gt; 'R'
+            AND (:especie IS NULL OR a.especie = :especie)
+            AND (:estadoId IS NULL OR e.id = :estadoId)
+            AND (:ciudad IS NULL OR LOWER(u.ciudad) LIKE LOWER(CONCAT('%', :ciudad, '%')))
+            ORDER BY s.createdAt DESC
+        </query>
+    </named-query>
+
+    <!-- ============================================================
+         Refugio
+         (placeholder - agregar aqui cuando se construya RefugioService)
+         ============================================================ -->
+
+    <!--
+    <named-query name="Refugio.search">
+        <query>
+            SELECT r FROM Refugio r
+            JOIN FETCH r.contacto c
+            JOIN FETCH r.ubicacion u
+            JOIN FETCH u.estado e
+            WHERE r.estado &lt;&gt; 'R'
+              AND (:especieAceptada IS NULL OR r.especieAceptada = :especieAceptada)
+              AND (:estadoId IS NULL OR e.id = :estadoId)
+            ORDER BY r.createdAt DESC
+        </query>
+    </named-query>
+    -->
+
+</entity-mappings>
