@@ -1,23 +1,178 @@
 {
   "info": {
-    "name": "BRIVET - Solicitud (createSolicitud + searchSolicitudes)",
-    "description": "Pruebas de integración para los endpoints públicos de reporte y búsqueda de mascotas perdidas/encontradas. No requieren autenticación.",
+    "name": "BRIVET - API Integration",
+    "description": "Colección de pruebas para los endpoints públicos de BRIVET: login, búsqueda y registro de mascotas perdidas/encontradas.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:8080",
-      "type": "string"
+      "value": "https://brivetvzla.com/api",
+      "type": "string",
+      "description": "URL base de producción. Para desarrollo local cambiar a http://localhost:8080"
     },
     {
       "key": "estadoId_valido",
-      "value": "1",
+      "value": "10",
       "type": "string",
-      "description": "Amazonas, según seed data. Cambiar si se usa otra BD."
+      "description": "Distrito Capital (Caracas). Ver sección 5 del API Guide para lista completa."
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token — se llena automáticamente al ejecutar el request de login exitoso."
     }
   ],
   "item": [
+    {
+      "name": "0. Login (auth)",
+      "item": [
+        {
+          "name": "POST /auth/login - Credenciales correctas (happy path)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) {",
+                  "        pm.collectionVariables.set('token', json.token);",
+                  "        console.log('Token guardado en variable de colección: token');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vet@vpv.com\",\n  \"password\": \"demo1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login del veterinario. Responde 200 con el objeto usuario y el JWT token. El script de test guarda el token automáticamente en la variable {{token}} de la colección para usarlo en requests protegidos."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/login - Error: password incorrecto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vet@vpv.com\",\n  \"password\": \"password_incorrecto\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe responder 401 Unauthorized con mensaje 'usuario/contraseña incorrectos'. El FE debe mostrar un error de credenciales al usuario, sin especificar si el email o el password es el incorrecto (buena práctica de seguridad)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/login - Error: email no existe",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexiste@vpv.com\",\n  \"password\": \"demo1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe responder 401 Unauthorized. Mismo mensaje que password incorrecto — el backend no distingue entre email inexistente y password malo para evitar enumeration attacks."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/login - Error: falta campo email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"demo1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe responder 400 Bad Request. El campo email es @NotBlank en LoginRequest — Spring valida antes de llegar al Service y devuelve el detalle del campo inválido."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/login - Error: email con formato inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"esto-no-es-un-email\",\n  \"password\": \"demo1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe responder 400 Bad Request. El campo email tiene @Email en LoginRequest — Spring valida el formato antes de llegar al Service."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /auth/login - Error: campo incorrecto (username en vez de email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"vet@vpv.com\",\n  \"password\": \"demo1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Error común de integración: enviar 'username' en vez de 'email'. Debe responder 400 Bad Request indicando que el campo email es obligatorio y está null. El campo correcto es siempre 'email'."
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "1. createSolicitud",
       "item": [
@@ -47,7 +202,7 @@
               "host": ["{{base_url}}"],
               "path": ["solicitud"]
             },
-            "description": "Caso exitoso: reporta una mascota perdida con una foto adjunta. Debe responder 200 con el objeto Solicitud completo (animal, contacto, ubicacion anidados), incluyendo mainPhotoUrl con la URL de S3. El campo 'fotos' es un file picker en Postman - seleccionar manualmente un archivo de imagen antes de enviar."
+            "description": "Caso exitoso: reporta una mascota perdida con foto adjunta. Debe responder 200 con el objeto Solicitud completo incluyendo mainPhotoUrl con la URL de S3. El campo 'fotos' es un file picker — seleccionar manualmente un archivo de imagen antes de enviar. NO requiere token."
           },
           "response": []
         },
@@ -61,7 +216,7 @@
               "formdata": [
                 {
                   "key": "data",
-                  "value": "{\n  \"tipoSolicitud\": \"ENCONTRADA\",\n  \"animal\": {\n    \"nombre\": null,\n    \"especie\": \"GATO\",\n    \"raza\": \"Común europeo\",\n    \"color\": \"Gris atigrado\",\n    \"tamanio\": \"PEQUENO\",\n    \"sexo\": null,\n    \"edadAproximada\": 1,\n    \"descripcion\": \"Gatito encontrado cerca del estacionamiento, sin collar\",\n    \"requiereAtencionMedica\": true\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Caracas\",\n    \"direccion\": \"Centro Comercial Sambil, estacionamiento nivel 2\",\n    \"referencia\": \"Cerca de la entrada principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"José\",\n    \"apellido\": \"Rodríguez\",\n    \"email\": \"jose@test.com\",\n    \"telefono\": \"+584129876543\",\n    \"whatsapp\": \"+584129876543\",\n    \"metodoContacto\": \"WHATSAPP\",\n    \"permitirDatosPublicos\": true\n  }\n}",
+                  "value": "{\n  \"tipoSolicitud\": \"ENCONTRADA\",\n  \"animal\": {\n    \"nombre\": null,\n    \"especie\": \"GATO\",\n    \"raza\": \"Comun europeo\",\n    \"color\": \"Gris atigrado\",\n    \"tamanio\": \"PEQUENO\",\n    \"sexo\": null,\n    \"edadAproximada\": 1,\n    \"descripcion\": \"Gatito encontrado cerca del estacionamiento, sin collar\",\n    \"requiereAtencionMedica\": true\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Caracas\",\n    \"direccion\": \"Centro Comercial Sambil, estacionamiento nivel 2\",\n    \"referencia\": \"Cerca de la entrada principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Jose\",\n    \"apellido\": \"Rodriguez\",\n    \"email\": \"jose@test.com\",\n    \"telefono\": \"+584129876543\",\n    \"whatsapp\": \"+584129876543\",\n    \"metodoContacto\": \"WHATSAPP\",\n    \"permitirDatosPublicos\": true\n  }\n}",
                   "type": "text",
                   "contentType": "application/json"
                 }
@@ -72,7 +227,7 @@
               "host": ["{{base_url}}"],
               "path": ["solicitud"]
             },
-            "description": "Caso exitoso sin foto: el campo 'fotos' es opcional según el DTO. Debe responder 200 con el objeto Solicitud completo, pero mainPhotoUrl debe venir vacío o null ya que no se subió ninguna imagen. Nota: nombre y sexo van null intencionalmente, ya que en mascotas encontradas suelen ser desconocidos."
+            "description": "Caso exitoso sin foto. mainPhotoUrl debe venir vacío en el response. nombre y sexo son null intencionalmente — en mascotas encontradas suelen ser desconocidos. NO requiere token."
           },
           "response": []
         },
@@ -86,7 +241,7 @@
               "formdata": [
                 {
                   "key": "data",
-                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Luna\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"MEDIANO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Maracay\",\n    \"direccion\": \"Calle Principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"María\",\n    \"apellido\": \"González\",\n    \"telefono\": \"+584121111111\",\n    \"whatsapp\": \"+584121111111\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Luna\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"MEDIANO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Maracay\",\n    \"direccion\": \"Calle Principal\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Maria\",\n    \"apellido\": \"Gonzalez\",\n    \"telefono\": \"+584121111111\",\n    \"whatsapp\": \"+584121111111\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
                   "type": "text",
                   "contentType": "application/json"
                 }
@@ -97,7 +252,7 @@
               "host": ["{{base_url}}"],
               "path": ["solicitud"]
             },
-            "description": "Caso de error de validación: contacto.email es @NotBlank en ContactoRequest pero se omite. Debe responder 400 Bad Request con detalle del campo inválido (manejado por el handler de validación de Spring, vía @Valid en el controller)."
+            "description": "Error de validación: falta contacto.email (@NotBlank). Debe responder 400 Bad Request con el nombre del campo inválido en el mensaje."
           },
           "response": []
         },
@@ -111,7 +266,7 @@
               "formdata": [
                 {
                   "key": "data",
-                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Rocky\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"GRANDE\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": 9999,\n    \"ciudad\": \"Ciudad Inventada\",\n    \"direccion\": \"Calle Falsa 123\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Pedro\",\n    \"apellido\": \"Pérez\",\n    \"email\": \"pedro@test.com\",\n    \"telefono\": \"+584125555555\",\n    \"whatsapp\": \"+584125555555\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Rocky\",\n    \"especie\": \"PERRO\",\n    \"tamanio\": \"GRANDE\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": 9999,\n    \"ciudad\": \"Ciudad Inventada\",\n    \"direccion\": \"Calle Falsa 123\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Pedro\",\n    \"apellido\": \"Perez\",\n    \"email\": \"pedro@test.com\",\n    \"telefono\": \"+584125555555\",\n    \"whatsapp\": \"+584125555555\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
                   "type": "text",
                   "contentType": "application/json"
                 }
@@ -122,12 +277,12 @@
               "host": ["{{base_url}}"],
               "path": ["solicitud"]
             },
-            "description": "Caso de error de negocio: estadoId 9999 no existe en la tabla estado. Debe responder 500 Internal Server Error (manejado por GlobalExceptionHandler) con mensaje 'Estado no encontrado: 9999', ya que SolicitudService lanza IllegalArgumentException vía orElseThrow()."
+            "description": "Error de negocio: estadoId 9999 no existe en la tabla estado. Debe responder 500 con mensaje 'Estado no encontrado: 9999'."
           },
           "response": []
         },
         {
-          "name": "POST /solicitud - Error: tipoSolicitud inválido (enum)",
+          "name": "POST /solicitud - Error: tipoSolicitud invalido (enum)",
           "request": {
             "method": "POST",
             "header": [],
@@ -136,7 +291,7 @@
               "formdata": [
                 {
                   "key": "data",
-                  "value": "{\n  \"tipoSolicitud\": \"DESAPARECIDA\",\n  \"animal\": {\n    \"nombre\": \"Toby\",\n    \"especie\": \"PERRO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Valencia\",\n    \"direccion\": \"Av. Bolívar\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Luis\",\n    \"apellido\": \"Díaz\",\n    \"email\": \"luis@test.com\",\n    \"telefono\": \"+584123333333\",\n    \"whatsapp\": \"+584123333333\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
+                  "value": "{\n  \"tipoSolicitud\": \"DESAPARECIDA\",\n  \"animal\": {\n    \"nombre\": \"Toby\",\n    \"especie\": \"PERRO\"\n  },\n  \"ubicacion\": {\n    \"estadoId\": {{estadoId_valido}},\n    \"ciudad\": \"Valencia\",\n    \"direccion\": \"Av. Bolivar\"\n  },\n  \"contacto\": {\n    \"nombre\": \"Luis\",\n    \"apellido\": \"Diaz\",\n    \"email\": \"luis@test.com\",\n    \"telefono\": \"+584123333333\",\n    \"whatsapp\": \"+584123333333\",\n    \"metodoContacto\": \"WHATSAPP\"\n  }\n}",
                   "type": "text",
                   "contentType": "application/json"
                 }
@@ -147,7 +302,7 @@
               "host": ["{{base_url}}"],
               "path": ["solicitud"]
             },
-            "description": "Caso de error de deserialización: 'DESAPARECIDA' no es un valor válido del enum TipoSolicitud (solo PERDIDA o ENCONTRADA). Debe responder 400 Bad Request, ya que Jackson falla al deserializar el enum antes incluso de llegar a las validaciones de Bean Validation."
+            "description": "Error de deserialización: DESAPARECIDA no es un valor válido del enum TipoSolicitud (solo PERDIDA o ENCONTRADA). Debe responder 400 Bad Request."
           },
           "response": []
         }
@@ -169,7 +324,7 @@
                 { "key": "tipo", "value": "PERDIDA" }
               ]
             },
-            "description": "Caso exitoso básico: lista todas las mascotas perdidas, sin filtros adicionales. Debe responder 200 con un array de Solicitud (puede estar vacío si no hay datos), excluyendo las de estado 'R' (rechazada)."
+            "description": "Lista todas las mascotas perdidas sin filtros. Responde 200 con array de Solicitud. Puede ser [] si no hay datos. NO requiere token."
           },
           "response": []
         },
@@ -187,7 +342,7 @@
                 { "key": "especie", "value": "PERRO" }
               ]
             },
-            "description": "Filtro combinado tipo + especie. Debe responder 200 solo con solicitudes donde animal.especie = 'P'."
+            "description": "Filtro combinado tipo + especie. Solo solicitudes donde animal.especie = 'P' (Perro)."
           },
           "response": []
         },
@@ -205,7 +360,7 @@
                 { "key": "ciudad", "value": "Caracas" }
               ]
             },
-            "description": "Filtro de búsqueda parcial case-insensitive sobre ubicacion.ciudad. 'caracas', 'CARACAS' o 'Caracas' deben devolver el mismo resultado."
+            "description": "Búsqueda parcial case-insensitive sobre ciudad. 'caracas', 'CARACAS' o 'Caracas' devuelven el mismo resultado."
           },
           "response": []
         },
@@ -223,7 +378,7 @@
                 { "key": "estadoId", "value": "{{estadoId_valido}}" }
               ]
             },
-            "description": "Filtro por estado venezolano (FK ubicacion.estado.id). Debe responder 200 solo con solicitudes ubicadas en ese estado."
+            "description": "Filtro por estado venezolano (FK ubicacion.estado.id = 10 = Distrito Capital)."
           },
           "response": []
         },
@@ -243,12 +398,12 @@
                 { "key": "ciudad", "value": "Caracas" }
               ]
             },
-            "description": "Los 4 filtros aplicados a la vez. Útil para validar que el AND de todas las condiciones funciona correctamente en el query JPQL."
+            "description": "Los 4 filtros a la vez: tipo + especie + estadoId + ciudad."
           },
           "response": []
         },
         {
-          "name": "GET /solicitud/search - Error: falta el parámetro obligatorio 'tipo'",
+          "name": "GET /solicitud/search - Error: falta parametro obligatorio 'tipo'",
           "request": {
             "method": "GET",
             "header": [],
@@ -260,12 +415,12 @@
                 { "key": "ciudad", "value": "Caracas" }
               ]
             },
-            "description": "Caso de error: 'tipo' es @RequestParam obligatorio (sin required=false) en el controller. Debe responder 400 Bad Request indicando que falta el parámetro requerido 'tipo'."
+            "description": "Debe responder 400 Bad Request. 'tipo' es @RequestParam obligatorio sin required=false."
           },
           "response": []
         },
         {
-          "name": "GET /solicitud/search - Error: tipo con valor inválido",
+          "name": "GET /solicitud/search - Error: tipo con valor invalido",
           "request": {
             "method": "GET",
             "header": [],
@@ -277,7 +432,7 @@
                 { "key": "tipo", "value": "ROBADA" }
               ]
             },
-            "description": "Caso de error: 'ROBADA' no es un valor del enum TipoSolicitud. Debe responder 400 Bad Request, ya que Spring no puede convertir el query param al enum esperado."
+            "description": "Debe responder 400 Bad Request. ROBADA no es un valor del enum TipoSolicitud."
           },
           "response": []
         },
@@ -295,7 +450,7 @@
                 { "key": "estadoId", "value": "9999" }
               ]
             },
-            "description": "Caso límite (no es técnicamente un error): estadoId 9999 no existe, pero a diferencia de createSolicitud, search NO valida que el estado exista - simplemente no habrá coincidencias. Debe responder 200 con un array vacío []."
+            "description": "No es un error técnico: estadoId 9999 no existe pero search no valida su existencia, simplemente no habrá coincidencias. Debe responder 200 con array vacío []."
           },
           "response": []
         }
