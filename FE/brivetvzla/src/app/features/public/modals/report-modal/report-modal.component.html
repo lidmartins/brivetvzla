@@ -1,0 +1,243 @@
+@if (showModal) {
+<div class="overlay show" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+        <div class="modal-head">
+            <div class="top">
+                <div class="ti">
+                    <div class="ic">📣</div>
+                    <h3>Reportar una mascota</h3>
+                </div>
+                <button class="x" type="button" (click)="closeModal()">✕</button>
+            </div>
+            @if (!submitSuccess()) {
+            <div class="progress-wrap">
+                <div class="steplabels">
+                    <b [class.done]="currentStep() >= 1">Tipo</b>
+                    <b [class.done]="currentStep() >= 2">Animal</b>
+                    <b [class.done]="currentStep() >= 3">Ubicación</b>
+                    <b [class.done]="currentStep() >= 4">Contacto</b>
+                    <b [class.done]="currentStep() >= 5">Fotos</b>
+                </div>
+                <div class="ptrack">
+                    <div class="pfill" [style.width]="(currentStep() / 5 * 100) + '%'"></div>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="modal-body">
+            @if (submitSuccess()) {
+            <div class="mstep active">
+                <div class="success">
+                    <div class="circle">✅</div>
+                    <h3>¡Reporte enviado!</h3>
+                    <p>Un médico veterinario de nuestra red revisará tu caso y lo publicará en breve. Te notificaremos
+                        por
+                        WhatsApp ante cualquier novedad.</p>
+                    <div class="info">
+                        <span style="font-size:22px">🩺</span>
+                        <div>
+                            <div style="font-weight:700;font-size:13.5px;color:#33403c">En revisión veterinaria</div>
+                            <div style="font-size:12.5px;color:#8a938d">Tiempo estimado: 1–3 horas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <form [formGroup]="reportForm">
+                @if (currentStep() === 1) {
+                <div class="mstep active">
+                    <h4>¿Qué quieres reportar?</h4>
+                    <div class="sub">Selecciona el tipo de reporte.</div>
+                    <div class="typecards">
+                        <div class="typecard" [class.sel-lost]="selectedType() === 'P'" (click)="selectType('P')">
+                            <div class="em">🔴</div><b>Mascota Perdida</b><small>Perdí a mi animal</small>
+                        </div>
+                        <div class="typecard" [class.sel-found]="selectedType() === 'E'" (click)="selectType('E')">
+                            <div class="em">🟢</div><b>Mascota Encontrada</b><small>Rescaté un animal</small>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (currentStep() === 2) {
+                <div class="mstep active">
+                    <h4>Información del animal</h4>
+                    <div class="fcol">
+                        <div class="frow">
+                            <div>
+                                <label>Nombre (si lo sabes)</label>
+                                <input class="inp" formControlName="an_nm_animal" placeholder="Ej: Luna">
+                            </div>
+                            <div>
+                                <label>Especie</label>
+                                <select class="inp" formControlName="an_tp_animal">
+                                    <option value="P">Perro</option>
+                                    <option value="G">Gato</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="frow">
+                            <div><label>Raza</label><input class="inp" placeholder="Mestizo, Labrador…"></div>
+                            <div>
+                                <label>Color</label>
+                                <input class="inp" formControlName="an_de_color" placeholder="Marrón y blanco">
+                                @if (hasRequiredError('an_de_color')) { <span class="err-msg">{{
+                                    getRequiredMessage('an_de_color')
+                                    }}</span> }
+                            </div>
+                        </div>
+                        <div class="frow">
+                            <div>
+                                <label>Tamaño</label>
+                                <select class="inp" formControlName="an_tp_size">
+                                    <option value="P">Pequeño</option>
+                                    <option value="M">Mediano</option>
+                                    <option value="G">Grande</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Sexo</label>
+                                <select class="inp" formControlName="an_tp_sex">
+                                    <option value="M">Macho</option>
+                                    <option value="H">Hembra</option>
+                                    <option value="N">No sé</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Edad aprox.</label>
+                                <input class="inp" placeholder="2 años">
+                            </div>
+                        </div>
+                        <div>
+                            <label>Descripción / señas particulares</label>
+                            <textarea class="inp" formControlName="an_de_animal"
+                                placeholder="Collar rojo, mancha en la oreja…"></textarea>
+                            @if (hasRequiredError('an_de_animal')) { <span class="err-msg">{{
+                                getRequiredMessage('an_de_animal')
+                                }}</span> }
+                        </div>
+                        <div style="background:#fdecec;border:1.5px solid #f5c2bc;border-radius:12px;padding:13px 15px">
+                            <label class="check" style="align-items:flex-start;gap:10px">
+                                <input type="checkbox"
+                                    style="margin-top:2px;width:17px;height:17px;accent-color:#DC4A4A;flex-shrink:0">
+                                <div>
+                                    <div style="font-weight:700;font-size:14px;color:#DC4A4A">🚨 El animal necesita
+                                        atención médica
+                                        urgente</div>
+                                    <div style="font-size:12.5px;color:#8a3a2c;margin-top:2px">Está herido, enfermo o en
+                                        peligro
+                                        inmediato. Un veterinario priorizará este caso.</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (currentStep() === 3) {
+                <div class="mstep active">
+                    <h4>Ubicación y fecha</h4>
+                    <div class="fcol">
+                        <div class="frow">
+                            <div><label>Estado</label><select class="inp">
+                                    <option value="">Selecciona…</option>
+                                    <option>Amazonas</option>
+                                    <option>Anzoátegui</option>
+                                    <option>Apure</option>
+                                    <option>Aragua</option>
+                                    <option>Barinas</option>
+                                    <option>Bolívar</option>
+                                    <option>Carabobo</option>
+                                    <option>Cojedes</option>
+                                    <option>Delta Amacuro</option>
+                                    <option>Distrito Capital</option>
+                                    <option>Falcón</option>
+                                    <option>Guárico</option>
+                                    <option>La Guaira</option>
+                                    <option>Lara</option>
+                                    <option>Mérida</option>
+                                    <option>Miranda</option>
+                                    <option>Monagas</option>
+                                    <option>Nueva Esparta</option>
+                                    <option>Portuguesa</option>
+                                    <option>Sucre</option>
+                                    <option>Táchira</option>
+                                    <option>Trujillo</option>
+                                    <option>Yaracuy</option>
+                                    <option>Zulia</option>
+                                </select></div>
+                            <div><label>Ciudad / zona</label><input class="inp" placeholder="Maracay, El Limón…"></div>
+                        </div>
+                        <div><label>Referencia del lugar</label><input class="inp"
+                                placeholder="Cerca de la plaza, sector…"></div>
+                        <div class="frow">
+                            <div><label>Fecha</label><input class="inp" type="date"></div>
+                            <div><label>Hora aprox.</label><input class="inp" type="time"></div>
+                        </div>
+                        <div class="note"><span style="font-size:18px">📍</span><span>Podrás ajustar la ubicación exacta
+                                en el mapa después de enviar.</span></div>
+                    </div>
+                </div>
+                }
+                @if (currentStep() === 4) {
+                <div class="mstep active">
+                    <h4>Tus datos de contacto</h4>
+                    <div class="sub">Para que la familia o nuestro equipo pueda comunicarse contigo.</div>
+                    <div class="fcol">
+                        <div><label>Nombre</label><input class="inp" placeholder="Tu nombre"></div>
+                        <div class="frow">
+                            <div>
+                                <label>Teléfono</label>
+                                <input class="inp" formControlName="an_telefono" placeholder="0414-1234567">
+                                @if (hasRequiredError('an_telefono')) { <span class="err-msg">{{
+                                    getRequiredMessage('an_telefono')
+                                    }}</span> }
+                            </div>
+                            <div><label>WhatsApp</label><input class="inp" placeholder="0414-1234567"></div>
+                        </div>
+                        <div><label>Correo (opcional)</label><input class="inp" placeholder="tu@correo.com"></div>
+                        <label class="check"><input type="checkbox" checked="">Acepto que un veterinario revise y
+                            publique este reporte.</label>
+                    </div>
+                </div>
+                }
+                @if (currentStep() === 5) {
+                <div class="mstep active">
+                    <h4>Fotos del animal</h4>
+                    <div class="sub">Una buena foto multiplica las probabilidades de un reencuentro.</div>
+                    <div class="dropzone">
+                        <div class="em">📸</div>
+                        <b>Arrastra tus fotos aquí</b>
+                        <small>o haz clic para seleccionar · JPG, PNG hasta 10MB</small>
+                    </div>
+                    <div class="thumbs">
+                        <div class="thumb">🐾</div>
+                        <div class="thumb empty">+</div>
+                        <div class="thumb empty">+</div>
+                    </div>
+                    @if (submitError()) {
+                    <p style="color:#DC4A4A;font-size:14px;margin-top:16px">{{ submitError() }}</p>
+                    }
+                </div>
+                }
+            </form>
+            }
+        </div>
+
+        <div class="modal-foot">
+            @if (submitSuccess()) {
+            <span></span>
+            <button class="m-next" type="button" (click)="closeModal()">Cerrar</button>
+            } @else {
+            <button class="m-back" type="button" (click)="prevStep()"
+                [style.visibility]="currentStep() === 1 ? 'hidden' : 'visible'">← Atrás</button>
+            <div class="m-count">Paso {{ currentStep() }} de 5</div>
+            <button class="m-next" type="button" (click)="nextStep()" [disabled]="submitting()">
+                {{ currentStep() === 5 ? (submitting() ? 'Enviando…' : 'Enviar reporte ✓') : 'Siguiente →' }}
+            </button>
+            }
+        </div>
+
+    </div>
+</div>
+}

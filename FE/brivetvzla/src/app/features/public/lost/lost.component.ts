@@ -1,13 +1,15 @@
 import { Component, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ReportModalComponent } from '../modals/report-modal/report-modal.component';
 
 @Component({
   selector: 'app-lost',
-  imports: [FormsModule],
+  imports: [FormsModule, ReportModalComponent],
   templateUrl: './lost.component.html',
   styleUrl: './lost.component.scss'
 })
 export class LostComponent {
+
   filter = signal<'all' | 'dog' | 'cat' | 'other'>('all');
   search = signal('');
 

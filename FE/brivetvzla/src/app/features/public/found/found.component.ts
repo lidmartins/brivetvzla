@@ -1,9 +1,10 @@
 import { Component, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ReportModalComponent } from '../modals/report-modal/report-modal.component';
 
 @Component({
   selector: 'app-found',
-  imports: [FormsModule],
+  imports: [FormsModule, ReportModalComponent],
   templateUrl: './found.component.html',
   styleUrl: './found.component.scss'
 })
