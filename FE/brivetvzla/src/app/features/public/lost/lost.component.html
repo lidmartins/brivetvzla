@@ -33,7 +33,7 @@
 
   <div class="grid">
     @for (a of filtered(); track a.name) {
-    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer">
+    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer" (click)="petCardModal.open(a)">
       <div class="photo" [style.background]="a.color">
         <span class="pw">🐾</span>
         <span class="badge lost">🔴 PERDIDO</span>
@@ -64,3 +64,4 @@
 </div>
 <button class="fab show" id="fab" data-report="perdida" (click)="reportModal.openReportModal('P')">+ <span id="fabLabel">Reportar Mascota Perdida</span></button>
 <app-report-modal #reportModal />
+<app-pet-card-modal #petCardModal />

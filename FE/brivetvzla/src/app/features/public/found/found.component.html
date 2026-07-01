@@ -28,7 +28,7 @@
 
   <div class="grid">
     @for (a of filtered(); track a.zone + a.time) {
-    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer">
+    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer" (click)="petCardModal.open(a)">
       <div class="photo" [style.background]="a.color">
         <span class="pw">🐾</span>
         <span class="badge found">🟢 ENCONTRADO</span>
@@ -59,3 +59,4 @@
 </div>
 <button class="fab show" id="fab" data-report="encontrada" (click)="reportModal.openReportModal('E')">+ <span id="fabLabel">Reportar Mascota Encontrada</span></button>
 <app-report-modal #reportModal />
+<app-pet-card-modal #petCardModal />

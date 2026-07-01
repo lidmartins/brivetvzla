@@ -39,7 +39,8 @@
   <h2>¿Quieres sumarte a la red?</h2>
   <p>Si eres veterinario, rescatista o quieres ser voluntario, te necesitamos.</p>
   <div class="btns">
-    <button class="btn-teal">+ Registrar Refugio</button>
+    <button class="btn-teal" (click)="shelterModal.openModal()">+ Registrar Refugio</button>
     <button class="b2" routerLink="/login">Soy veterinario</button>
   </div>
 </div>
+<app-shelter-registration-modal #shelterModal />

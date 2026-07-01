@@ -1,1 +1,231 @@
-<p>shelter-registration-modal works!</p>
+<div class="overlay" [class.show]="showModal" id="shelterOverlay" (click)="closeModal()">
+    <div class="modal" id="shelterModal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+            <div class="top">
+                <div class="ti">
+                    <div class="ic">🏠</div>
+                    <h3>Registrar Refugio Temporal</h3>
+                </div>
+                <button class="x" id="shelterClose" (click)="closeModal()">✕</button>
+            </div>
+            @if (!submitSuccess()) {
+            <div class="progress-wrap" id="sPW" style="display: block;">
+                <div class="steplabels" id="sStepLabels">
+                    <div class="slabel" [class.done]="currentStep() >= 1">Contacto</div>
+                    <div class="slabel" [class.done]="currentStep() >= 2">Ubicación</div>
+                    <div class="slabel" [class.done]="currentStep() >= 3">Animales</div>
+                    <div class="slabel" [class.done]="currentStep() >= 4">Condiciones</div>
+                </div>
+                <div class="ptrack">
+                    <div class="pfill" id="sPF" [style.width]="(currentStep() / 4 * 100) + '%'"></div>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="modal-body">
+
+            @if (submitSuccess()) {
+            <!-- SUCCESS -->
+            <div class="mstep active" data-sstep="5">
+                <div class="success">
+                    <div class="circle">🏠</div>
+                    <h3>¡Refugio registrado!</h3>
+                    <p>Gracias por abrir tu hogar. Nuestro equipo revisará tu registro y te contactará en las próximas
+                        horas
+                        para coordinar los primeros casos.</p>
+                    <div class="info"><span style="font-size:22px">🩺</span>
+                        <div>
+                            <div style="font-weight:700;font-size:13.5px;color:#33403c">En revisión veterinaria</div>
+                            <div style="font-size:12.5px;color:#8a938d">Te contactaremos por WhatsApp</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <!-- STEP 1: Contacto -->
+            @if (currentStep() === 1) {
+            <div class="mstep active" data-sstep="1">
+                <h4>¿Quién ofrece el refugio?</h4>
+                <div class="sub">Tus datos para que podamos contactarte y publicar tu perfil.</div>
+                <div class="fcol">
+                    <div class="frow">
+                        <div><label>Nombre</label><input class="inp" placeholder="Tu nombre"></div>
+                        <div><label>Apellido</label><input class="inp" placeholder="Tu apellido"></div>
+                    </div>
+                    <div class="frow">
+                        <div><label>Teléfono</label><input class="inp" placeholder="0414-1234567"></div>
+                        <div><label>WhatsApp</label><input class="inp" placeholder="0414-1234567"></div>
+                    </div>
+                    <div><label>Correo electrónico</label><input class="inp" type="email" placeholder="tu@correo.com">
+                    </div>
+                    <div class="note"><span style="font-size:18px">🔒</span><span>Tus datos solo serán visibles para
+                            nuestro
+                            equipo veterinario y los dueños verificados.</span></div>
+                </div>
+            </div>
+            }
+
+            <!-- STEP 2: Ubicación -->
+            @if (currentStep() === 2) {
+            <div class="mstep active" data-sstep="2">
+                <h4>¿Dónde está el refugio?</h4>
+                <div class="sub">Necesitamos saber la ubicación para conectarte con animales cercanos.</div>
+                <div class="fcol">
+                    <div class="frow">
+                        <div><label>Estado</label><select class="inp">
+                                <option value="">Selecciona…</option>
+                                <option>Amazonas</option>
+                                <option>Anzoátegui</option>
+                                <option>Apure</option>
+                                <option>Aragua</option>
+                                <option>Barinas</option>
+                                <option>Bolívar</option>
+                                <option>Carabobo</option>
+                                <option>Cojedes</option>
+                                <option>Delta Amacuro</option>
+                                <option>Distrito Capital</option>
+                                <option>Falcón</option>
+                                <option>Guárico</option>
+                                <option>La Guaira</option>
+                                <option>Lara</option>
+                                <option>Mérida</option>
+                                <option>Miranda</option>
+                                <option>Monagas</option>
+                                <option>Nueva Esparta</option>
+                                <option>Portuguesa</option>
+                                <option>Sucre</option>
+                                <option>Táchira</option>
+                                <option>Trujillo</option>
+                                <option>Yaracuy</option>
+                                <option>Zulia</option>
+                            </select></div>
+                        <div><label>Ciudad</label><input class="inp" placeholder="Maracay, Valencia…"></div>
+                    </div>
+                    <div><label>Dirección</label><input class="inp" placeholder="Av. Bolívar, Urb. La Providencia…">
+                    </div>
+                    <div class="frow">
+                        <div><label>Zona / Sector</label><input class="inp" placeholder="El Limón, Centro…"></div>
+                        <div><label>Código postal <span style="color:var(--muted)">(opcional)</span></label><input
+                                class="inp" placeholder="2101"></div>
+                    </div>
+                    <div><label>Referencia del lugar</label><textarea class="inp" style="min-height:70px"
+                            placeholder="Casa azul frente a la panadería, contiguo al parque…"></textarea></div>
+                </div>
+            </div>
+            }
+
+            <!-- STEP 3: Capacidad -->
+            @if (currentStep() === 3) {
+            <div class="mstep active" data-sstep="3">
+                <h4>¿Qué animales puedes recibir?</h4>
+                <div class="sub">Esto nos ayuda a asignarte los casos más compatibles con tu hogar.</div>
+                <div class="fcol">
+                    <div><label>Especie que puedes alojar</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px">
+                            <label
+                                style="display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid var(--border);border-radius:14px;padding:16px 10px;cursor:pointer;transition:.15s;font-weight:600;font-size:13px;color:var(--head)"
+                                id="sc-dog">
+                                <input type="radio" name="sSpecies" value="perro" style="display:none">
+                                <span style="font-size:28px">🐶</span>Perros
+                            </label>
+                            <label
+                                style="display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid var(--border);border-radius:14px;padding:16px 10px;cursor:pointer;transition:.15s;font-weight:600;font-size:13px;color:var(--head)"
+                                id="sc-cat">
+                                <input type="radio" name="sSpecies" value="gato" style="display:none">
+                                <span style="font-size:28px">🐱</span>Gatos
+                            </label>
+                            <label
+                                style="display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid var(--border);border-radius:14px;padding:16px 10px;cursor:pointer;transition:.15s;font-weight:600;font-size:13px;color:var(--head)"
+                                id="sc-both">
+                                <input type="radio" name="sSpecies" value="ambos" style="display:none">
+                                <span style="font-size:28px">🐾</span>Ambos
+                            </label>
+                        </div>
+                    </div>
+                    <div class="frow">
+                        <div><label>Cantidad aprox. que puedes recibir</label><select class="inp">
+                                <option value="">Selecciona…</option>
+                                <option>1 animal</option>
+                                <option>2 animales</option>
+                                <option>3 a 5 animales</option>
+                                <option>6 a 10 animales</option>
+                                <option>Más de 10</option>
+                            </select></div>
+                        <div><label>Tiempo disponible</label><select class="inp">
+                                <option value="">Selecciona…</option>
+                                <option>Días (1–7)</option>
+                                <option>Una semana</option>
+                                <option>Dos semanas</option>
+                                <option>Un mes o más</option>
+                                <option>Indefinido</option>
+                            </select></div>
+                    </div>
+                    <div><label>¿Tienes espacio para animales con necesidades especiales? <span
+                                style="color:var(--muted)">(opcional)</span></label>
+                        <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px">
+                            <label class="check"><input type="checkbox">Animales heridos o en recuperación</label>
+                            <label class="check"><input type="checkbox">Cachorros o crías sin madre</label>
+                            <label class="check"><input type="checkbox">Animales adultos mayores</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <!-- STEP 4: Condiciones -->
+            @if (currentStep() === 4) {
+            <div class="mstep active" data-sstep="4">
+                <h4>Condiciones del refugio</h4>
+                <div class="sub">Para garantizar el bienestar de los animales y la seguridad de tu hogar.</div>
+                <div class="fcol">
+                    <div><label>¿Tienes mascotas propias en casa? <span
+                                style="color:var(--muted)">(opcional)</span></label><select class="inp">
+                            <option value="">Selecciona…</option>
+                            <option>No, no tengo mascotas</option>
+                            <option>Sí, perros</option>
+                            <option>Sí, gatos</option>
+                            <option>Sí, perros y gatos</option>
+                            <option>Sí, otras mascotas</option>
+                        </select></div>
+                    <div class="frow">
+                        <div><label>Tipo de vivienda</label><select class="inp">
+                                <option value="">Selecciona…</option>
+                                <option>Casa con patio</option>
+                                <option>Casa sin patio</option>
+                                <option>Apartamento</option>
+                                <option>Finca / terreno</option>
+                            </select></div>
+                        <div><label>¿Tienes cercado?</label><select class="inp">
+                                <option value="">Selecciona…</option>
+                                <option>Sí, cercado completo</option>
+                                <option>Sí, parcial</option>
+                                <option>No</option>
+                            </select></div>
+                    </div>
+                    <div><label>Notas adicionales <span style="color:var(--muted)">(opcional)</span></label><textarea
+                            class="inp" style="min-height:80px"
+                            placeholder="Alergias en casa, horarios disponibles para recibir, condiciones especiales…"></textarea>
+                    </div>
+                    <label class="check"><input type="checkbox" id="sTOS">Confirmo que ofrezco este espacio
+                        voluntariamente y me
+                        comprometo a cuidar los animales hasta el reencuentro con sus dueños.</label>
+                </div>
+            </div>
+            }
+            }
+
+        </div>
+        <div class="modal-foot" id="sModalFoot">
+            @if (submitSuccess()) {
+            <button style="flex:1" class="m-next" type="button" (click)="closeModal()">Cerrar</button>
+            } @else {
+            <button class="m-back" id="sMBack" (click)="prevStep()"
+                [style.visibility]="currentStep() === 1 ? 'hidden' : 'visible'">← Atrás</button>
+            <div class="m-count" id="sMCount">Paso {{ currentStep() }} de 4</div>
+            <button class="m-next" id="sMNext" (click)="nextStep()">
+                {{ currentStep() === 4 ? 'Registrar 🏠' : 'Siguiente →' }}
+            </button>
+            }
+        </div>
+    </div>
+</div>

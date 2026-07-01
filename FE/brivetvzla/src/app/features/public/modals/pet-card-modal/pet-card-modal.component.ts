@@ -7,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrl: './pet-card-modal.component.scss'
 })
 export class PetCardModalComponent {
+  showModal = false;
+  pet: any = {};
 
+  open(pet: any) {
+    this.pet = pet;
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
 }

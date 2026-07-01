@@ -1,10 +1,11 @@
 import { Component, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReportModalComponent } from '../modals/report-modal/report-modal.component';
+import { PetCardModalComponent } from '../modals/pet-card-modal/pet-card-modal.component';
 
 @Component({
   selector: 'app-lost',
-  imports: [FormsModule, ReportModalComponent],
+  imports: [FormsModule, ReportModalComponent, PetCardModalComponent],
   templateUrl: './lost.component.html',
   styleUrl: './lost.component.scss'
 })
