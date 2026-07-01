@@ -2,9 +2,10 @@ package com.brivetvzla.backend.model.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Request body para el endpoint:
@@ -23,6 +24,8 @@ import jakarta.validation.constraints.Size;
  * <p>Este request es un JSON plano (sin archivos adjuntos);
  * los refugios no requieren foto en el formulario actual.
  */
+@Getter
+@Setter
 public class RegistroRefugioRequest {
 
     /**
@@ -74,20 +77,4 @@ public class RegistroRefugioRequest {
         return condiciones != null && condiciones.isAceptaTerminos();
     }
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public String getNombreRefugio() { return nombreRefugio; }
-    public void setNombreRefugio(String nombreRefugio) { this.nombreRefugio = nombreRefugio; }
-
-    public ContactoRequest getContacto() { return contacto; }
-    public void setContacto(ContactoRequest contacto) { this.contacto = contacto; }
-
-    public UbicacionRequest getUbicacion() { return ubicacion; }
-    public void setUbicacion(UbicacionRequest ubicacion) { this.ubicacion = ubicacion; }
-
-    public AnimalesRefugioRequest getAnimales() { return animales; }
-    public void setAnimales(AnimalesRefugioRequest animales) { this.animales = animales; }
-
-    public CondicionesRefugioRequest getCondiciones() { return condiciones; }
-    public void setCondiciones(CondicionesRefugioRequest condiciones) { this.condiciones = condiciones; }
 }

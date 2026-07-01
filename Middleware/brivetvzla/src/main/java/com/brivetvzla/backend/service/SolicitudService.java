@@ -1,12 +1,15 @@
 package com.brivetvzla.backend.service;
 
+import com.brivetvzla.backend.exception.ResourceNotFoundException;
 import com.brivetvzla.backend.model.dto.request.ReporteMascotaRequest;
+import com.brivetvzla.backend.model.dto.request.VetSolicitudUpdateRequest;
 import com.brivetvzla.backend.model.entity.Animal;
 import com.brivetvzla.backend.model.entity.Contacto;
 import com.brivetvzla.backend.model.entity.Estado;
 import com.brivetvzla.backend.model.entity.Solicitud;
 import com.brivetvzla.backend.model.entity.Ubicacion;
 import com.brivetvzla.backend.model.enums.EspecieAnimal;
+import com.brivetvzla.backend.model.enums.EstadoSolicitud;
 import com.brivetvzla.backend.model.enums.TipoSolicitud;
 import com.brivetvzla.backend.repository.AnimalRepository;
 import com.brivetvzla.backend.repository.ContactoRepository;
@@ -185,19 +188,116 @@ public class SolicitudService {
 
     /**
      * Búsqueda pública de mascotas perdidas/encontradas.
-     * Usada por las secciones "Mascotas Perdidas" / "Mascotas Encontradas" del home.
+     * Usada por las secciones "Mascotas Perdidas" / "Mascotas Encontradas",
+     * y también por "Reportes recientes" del home (sin filtro de tipo, mezcla ambos).
      *
-     * @param tipo      "PERDIDA" o "ENCONTRADA" (obligatorio)
+     * @param tipo      "PERDIDA" o "ENCONTRADA", o null para traer ambos tipos mezclados
      * @param especie   "PERRO", "GATO" o null para todas
      * @param estadoId  ID del estado venezolano, o null para todos
      * @param ciudad    texto parcial de ciudad, o null para todas
      */
     public List<Solicitud> searchSolicitudes(TipoSolicitud tipo, EspecieAnimal especie,
                                              Integer estadoId, String ciudad) {
+        String tipoCodigo = tipo != null ? tipo.getCodigo() : null;
         String especieCodigo = especie != null ? especie.getCodigo() : null;
         String ciudadFiltro = (ciudad != null && !ciudad.isBlank()) ? ciudad.trim() : null;
 
         return solicitudRepository.searchSolicitudes(
-                tipo.getCodigo(), especieCodigo, estadoId, ciudadFiltro);
+                tipoCodigo, especieCodigo, estadoId, ciudadFiltro);
+    }
+
+    /**
+     * Detalle público de una solicitud individual (GET /solicitud/{id}).
+     * Excluye rechazadas y eliminadas, igual que la búsqueda.
+     *
+     * @throws ResourceNotFoundException si no existe o no es visible al público
+     */
+    public Solicitud getSolicitudPublicaById(Integer id) {
+        return solicitudRepository.findByIdPublic(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada: " + id));
+    }
+
+    /**
+     * Listado de solicitudes para el dashboard veterinario (GET /vet/solicitud).
+     * Sin exclusión de estados — el veterinario ve pendientes, rechazadas y
+     * eliminadas también, a diferencia de la búsqueda pública.
+     *
+     * @param estado filtro opcional por estatus; null trae todas
+     */
+    public List<Solicitud> listSolicitudesForVet(EstadoSolicitud estado) {
+        String estadoCodigo = estado != null ? estado.getCodigo() : null;
+        return solicitudRepository.findAllForVet(estadoCodigo);
+    }
+
+    /**
+     * Detalle de una solicitud para el dashboard veterinario (GET /vet/solicitud/{id}).
+     * Sin exclusión de estados — a diferencia de getSolicitudPublicaById.
+     *
+     * @throws ResourceNotFoundException si el id no existe
+     */
+    public Solicitud getSolicitudForVetById(Integer id) {
+        return solicitudRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada: " + id));
+    }
+
+    /**
+     * Actualiza el estatus (y opcionalmente la observación veterinaria) de una
+     * solicitud existente. Usado por el dashboard veterinario protegido
+     * (PUT /vet/solicitud/{id}).
+     *
+     * @throws ResourceNotFoundException si el id no existe
+     */
+    @Transactional
+    public Solicitud updateEstadoSolicitud(Integer id, VetSolicitudUpdateRequest request) {
+        Solicitud solicitud = solicitudRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada: " + id));
+
+        solicitud.setEstado(request.getEstado().getCodigo());
+
+        if (request.getObservacionVet() != null) {
+            solicitud.setObservacionVet(request.getObservacionVet());
+        }
+
+        return solicitudRepository.save(solicitud);
+    }
+
+    /**
+     * Elimina lógicamente una solicitud (soft delete): marca
+     * estado = 'E' (Eliminada) en la solicitud, y propaga el mismo
+     * flag a animal, contacto y ubicacion asociados — ninguno de
+     * estos se comparte entre solicitudes (cada una crea sus propios
+     * registros en createSolicitudRecord()), así que es seguro marcarlos
+     * sin afectar otros datos.
+     *
+     * No se hace hard delete a propósito — se conserva todo el historial
+     * (incluyendo fotos en S3) para auditoría. La búsqueda pública
+     * (Solicitud.search) ya excluye estado 'E' a nivel de solicitud.
+     *
+     * Usado por el dashboard veterinario protegido
+     * (DELETE /vet/solicitud/{id}).
+     *
+     * @throws ResourceNotFoundException si el id no existe
+     */
+    @Transactional
+    public Solicitud deleteSolicitud(Integer id) {
+        Solicitud solicitud = solicitudRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada: " + id));
+
+        solicitud.setEstado(EstadoSolicitud.ELIMINADA.getCodigo());
+        solicitud = solicitudRepository.save(solicitud);
+
+        Animal animal = solicitud.getAnimal();
+        animal.setEstadoAnimal("E");
+        animalRepository.save(animal);
+
+        Contacto contacto = solicitud.getContacto();
+        contacto.setEstadoContacto("E");
+        contactoRepository.save(contacto);
+
+        Ubicacion ubicacion = solicitud.getUbicacion();
+        ubicacion.setEstadoRegistro("E");
+        ubicacionRepository.save(ubicacion);
+
+        return solicitud;
     }
 }

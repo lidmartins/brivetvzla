@@ -3,6 +3,8 @@ package com.brivetvzla.backend.model.dto.request;
 import com.brivetvzla.backend.model.enums.TipoSolicitud;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Request body para el endpoint:
@@ -31,6 +33,8 @@ import jakarta.validation.constraints.NotNull;
  * {@code @RequestPart("data") ReporteMascotaRequest} y
  * {@code @RequestPart("fotos") List<MultipartFile>}.
  */
+@Getter
+@Setter
 public class ReporteMascotaRequest {
 
     /**
@@ -72,17 +76,4 @@ public class ReporteMascotaRequest {
      * El controlador se encarga de subirlas a S3 y almacenar las URLs.
      */
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public TipoSolicitud getTipoSolicitud() { return tipoSolicitud; }
-    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) { this.tipoSolicitud = tipoSolicitud; }
-
-    public AnimalRequest getAnimal() { return animal; }
-    public void setAnimal(AnimalRequest animal) { this.animal = animal; }
-
-    public UbicacionRequest getUbicacion() { return ubicacion; }
-    public void setUbicacion(UbicacionRequest ubicacion) { this.ubicacion = ubicacion; }
-
-    public ContactoRequest getContacto() { return contacto; }
-    public void setContacto(ContactoRequest contacto) { this.contacto = contacto; }
 }

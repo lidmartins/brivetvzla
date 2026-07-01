@@ -2,9 +2,12 @@ package com.brivetvzla.backend.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "revision_veterinaria")
+@Getter
 public class RevisionVeterinaria {
 
     @Id
@@ -13,19 +16,23 @@ public class RevisionVeterinaria {
     private Integer id;
 
     // FK → animal
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rv_an_cd_animal", nullable = false)
     private Animal animal;
 
     // FK → user (el veterinario que revisó)
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rv_us_cd_user", nullable = false)
     private Usuario veterinario;
 
     // 'P'=Pendiente | 'A'=Activo | 'R'=Revisado
+    @Setter
     @Column(name = "rv_st_vet_review", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String estado = "P";
 
+    @Setter
     @Column(name = "rv_de_comment", columnDefinition = "TEXT")
     private String comentario;
 
@@ -44,23 +51,4 @@ public class RevisionVeterinaria {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    // ── Getters & Setters ──────────────────────────────────────────────────────
-
-    public Integer getId() { return id; }
-
-    public Animal getAnimal() { return animal; }
-    public void setAnimal(Animal animal) { this.animal = animal; }
-
-    public Usuario getVeterinario() { return veterinario; }
-    public void setVeterinario(Usuario veterinario) { this.veterinario = veterinario; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public String getComentario() { return comentario; }
-    public void setComentario(String comentario) { this.comentario = comentario; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

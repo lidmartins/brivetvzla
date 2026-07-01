@@ -2,11 +2,15 @@ package com.brivetvzla.backend.model.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Request body para POST /auth/login
  * Lo que envía el formulario de acceso veterinario.
  */
+@Getter
+@Setter
 public class LoginRequest {
 
     @NotBlank(message = "El correo es obligatorio")
@@ -15,12 +19,4 @@ public class LoginRequest {
 
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
-
-    // ── Getters & Setters ──────────────────────────────────────────────────────
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
 }

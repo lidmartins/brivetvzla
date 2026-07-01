@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Sección "Ubicación" — compartida por ReporteMascotaRequest y RegistroRefugioRequest.
@@ -18,6 +20,8 @@ import jakarta.validation.constraints.Size;
  *   - Coordenadas GPS (opcionales — para mapa futuro)
  * </pre>
  */
+@Getter
+@Setter
 public class UbicacionRequest {
 
     /**
@@ -49,23 +53,4 @@ public class UbicacionRequest {
     private Double latitud;
     private Double longitud;
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public Integer getEstadoId() { return estadoId; }
-    public void setEstadoId(Integer estadoId) { this.estadoId = estadoId; }
-
-    public String getCiudad() { return ciudad; }
-    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
-
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
-
-    public String getReferencia() { return referencia; }
-    public void setReferencia(String referencia) { this.referencia = referencia; }
-
-    public Double getLatitud() { return latitud; }
-    public void setLatitud(Double latitud) { this.latitud = latitud; }
-
-    public Double getLongitud() { return longitud; }
-    public void setLongitud(Double longitud) { this.longitud = longitud; }
 }

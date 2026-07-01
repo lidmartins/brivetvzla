@@ -16,11 +16,44 @@
             JOIN FETCH s.contacto c
             JOIN FETCH s.ubicacion u
             JOIN FETCH u.estado e
-            WHERE s.tipo = :tipo
-            AND s.estado &lt;&gt; 'R'
+            WHERE (:tipo IS NULL OR s.tipo = :tipo)
+            AND s.estado NOT IN ('R', 'E')
             AND (:especie IS NULL OR a.especie = :especie)
             AND (:estadoId IS NULL OR e.id = :estadoId)
             AND (:ciudad IS NULL OR LOWER(u.ciudad) LIKE LOWER(CONCAT('%', :ciudad, '%')))
+            ORDER BY s.createdAt DESC
+        </query>
+    </named-query>
+
+    <!--
+        Detalle público de una solicitud por id (GET /solicitud/{id}).
+        Misma exclusión que la búsqueda: rechazadas y eliminadas no son visibles al público.
+    -->
+    <named-query name="Solicitud.findByIdPublic">
+        <query>
+            SELECT s FROM Solicitud s
+            JOIN FETCH s.animal a
+            JOIN FETCH s.contacto c
+            JOIN FETCH s.ubicacion u
+            JOIN FETCH u.estado e
+            WHERE s.id = :id
+            AND s.estado NOT IN ('R', 'E')
+        </query>
+    </named-query>
+
+    <!--
+        Listado para el dashboard veterinario (GET /vet/solicitud), sin exclusión de
+        estados — el veterinario necesita ver pendientes, rechazadas y eliminadas también.
+        estado es opcional: si se omite, trae todas.
+    -->
+    <named-query name="Solicitud.findAllForVet">
+        <query>
+            SELECT s FROM Solicitud s
+            JOIN FETCH s.animal a
+            JOIN FETCH s.contacto c
+            JOIN FETCH s.ubicacion u
+            JOIN FETCH u.estado e
+            WHERE (:estado IS NULL OR s.estado = :estado)
             ORDER BY s.createdAt DESC
         </query>
     </named-query>

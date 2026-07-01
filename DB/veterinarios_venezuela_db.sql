@@ -93,6 +93,7 @@ DROP TABLE IF EXISTS ubicacion;
 CREATE TABLE IF NOT EXISTS ubicacion (
   ur_cd_ubicacion     INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   ur_es_cd_estado     INT UNSIGNED    NOT NULL COMMENT 'FK → estado.es_cd_estado',
+  ur_st_ubicacion     CHAR(1)         NOT NULL DEFAULT 'A' COMMENT 'A=Activo | E=Eliminado',
   ur_nm_city          VARCHAR(100)    NOT NULL,
   ur_nm_sector        VARCHAR(150)    NOT NULL,
   ur_de_address       VARCHAR(255)    NOT NULL,
@@ -106,7 +107,8 @@ CREATE TABLE IF NOT EXISTS ubicacion (
   CONSTRAINT pk_ubicacion       PRIMARY KEY (ur_cd_ubicacion),
   CONSTRAINT fk_ubicacion_estado FOREIGN KEY (ur_es_cd_estado)
                                    REFERENCES estado (es_cd_estado)
-                                   ON UPDATE CASCADE ON DELETE RESTRICT
+                                   ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT ck_ubicacion_st     CHECK (ur_st_ubicacion IN ('A','E'))
 ) ENGINE=InnoDB
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci
@@ -119,6 +121,7 @@ CREATE TABLE IF NOT EXISTS ubicacion (
 DROP TABLE IF EXISTS contacto;
 CREATE TABLE IF NOT EXISTS contacto (
   co_cd_contacto        INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  co_st_contacto        CHAR(1)         NOT NULL DEFAULT 'A' COMMENT 'A=Activo | E=Eliminado',
   co_nm_first_name      VARCHAR(100)    NOT NULL,
   co_nm_last_name       VARCHAR(100)    NOT NULL,
   co_de_email           VARCHAR(100)    NOT NULL,
@@ -131,7 +134,8 @@ CREATE TABLE IF NOT EXISTS contacto (
 
   CONSTRAINT pk_contacto        PRIMARY KEY (co_cd_contacto),
   CONSTRAINT ck_contact_method  CHECK (co_tp_contact_method IN ('W','P','E','A')),
-  CONSTRAINT ck_contact_public  CHECK (co_in_allow_public IN ('S','N'))
+  CONSTRAINT ck_contact_public  CHECK (co_in_allow_public IN ('S','N')),
+  CONSTRAINT ck_contacto_st     CHECK (co_st_contacto IN ('A','E'))
 ) ENGINE=InnoDB
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci
@@ -145,7 +149,8 @@ DROP TABLE IF EXISTS animal;
 CREATE TABLE IF NOT EXISTS animal (
   an_cd_animal            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   an_re_cd_refugio        INT UNSIGNED        NULL COMMENT 'FK → refugio.re_cd_refugio (optional)',
-  an_report_type          CHAR(1)         NOT NULL COMMENT 'P=Perdida | E=Encontrada',
+  an_tp_report            CHAR(1)         NOT NULL COMMENT 'P=Perdida | E=Encontrada',
+  an_st_animal            CHAR(1)         NOT NULL DEFAULT 'A' COMMENT 'A=Activa | E=Eliminada',
   an_nm_animal            VARCHAR(100)        NULL COMMENT 'Name of the animal (optional)',
   an_tp_animal            CHAR(1)          NULL COMMENT 'G=Gato | P=Perro',
   an_de_breed             VARCHAR(100)        NULL,
@@ -166,12 +171,13 @@ CREATE TABLE IF NOT EXISTS animal (
   CONSTRAINT fk_animal_refugio      FOREIGN KEY (an_re_cd_refugio)
                                       REFERENCES refugio (re_cd_refugio)
                                       ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT ck_animal_report_type  CHECK (an_report_type IN ('P','E')),
+  CONSTRAINT ck_animal_report_type  CHECK (an_tp_report IN ('P','E')),
   CONSTRAINT ck_animal_tp           CHECK (an_tp_animal IN ('G','P')),
   CONSTRAINT ck_animal_size         CHECK (an_tp_size IN ('P','M','G')),
   CONSTRAINT ck_animal_sex          CHECK (an_tp_sex IN ('M','H')),
   CONSTRAINT ck_animal_vet_req      CHECK (an_in_require_vet_review IN ('S','N')),
-  CONSTRAINT ck_animal_vet_st       CHECK (an_st_vet_review IN ('P','A','R'))
+  CONSTRAINT ck_animal_vet_st       CHECK (an_st_vet_review IN ('P','A','R')),
+  CONSTRAINT ck_animal_st           CHECK (an_st_animal IN ('A','E'))
 ) ENGINE=InnoDB
   CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci
@@ -234,7 +240,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
   so_ur_cd_ubicacion        INT UNSIGNED    NOT NULL COMMENT 'FK → ubicacion.ur_cd_ubicacion',
   so_tp_solicitud           CHAR(1)         NOT NULL COMMENT 'P=Perdida | E=Encontrada',
   so_dt_evento              DATETIME        NOT NULL COMMENT 'Date + time of the event',
-  so_st_solicitud           CHAR(1)         NOT NULL COMMENT 'P=Pendiente | R=Rechazada | A=Activa',
+  so_st_solicitud           CHAR(1)         NOT NULL COMMENT 'P=Pendiente | R=Rechazada | A=Activa | C=Reunida | T=Adoptada | E=Eliminada',
   so_de_observacion_vet     TEXT                NULL COMMENT 'Rejection reason from vet',
   so_de_s3_folder_path      VARCHAR(500)    NOT NULL COMMENT 'S3 folder path for photos',
   so_de_main_photo_url      VARCHAR(500)    NOT NULL COMMENT 'URL of the main photo',
@@ -252,7 +258,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
                                       REFERENCES ubicacion (ur_cd_ubicacion)
                                       ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT ck_solicitud_tp        CHECK (so_tp_solicitud IN ('P','E')),
-  CONSTRAINT ck_solicitud_st        CHECK (so_st_solicitud IN ('P','R','A'))
+  CONSTRAINT ck_solicitud_st        CHECK (so_st_solicitud IN ('P','R','A','C','T','E'))
 ) ENGINE=InnoDB
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci
@@ -374,10 +380,11 @@ INSERT INTO estado (es_nm_estado, es_cd_country, es_st_estado) VALUES
   an_tp_sex:              M=Macho       H=Hembra
   an_in_require_vet_review: S=Si        N=No
   an_st_vet_review:       P=Pendiente   A=Activo      R=Revisado
+  an_st_animal:           A=Activa      E=Eliminada
 
   ── Solicitud ───────────────────────────────────────
   so_tp_solicitud:        P=Perdida     E=Encontrada
-  so_st_solicitud:        P=Pendiente   R=Rechazada   A=Activa
+  so_st_solicitud:        P=Pendiente   R=Rechazada   A=Activa   C=Reunida   T=Adoptada   E=Eliminada
 
   ── Refugio ─────────────────────────────────────────
   re_st_refugio:          P=Pendiente   A=Activo      X=Lleno   I=Inactivo  R=Rechazado
@@ -393,9 +400,13 @@ INSERT INTO estado (es_nm_estado, es_cd_country, es_st_estado) VALUES
   ── Contacto ────────────────────────────────────────
   co_tp_contact_method:   W=WhatsApp    P=Phone       E=Email   A=Any
   co_in_allow_public:     S=Si          N=No
+  co_st_contacto:         A=Activo      E=Eliminado
 
   ── Estado ──────────────────────────────────────────
   es_st_estado:           A=Activo      I=Inactivo
+
+  ── Ubicacion ───────────────────────────────────────
+  ur_st_ubicacion:        A=Activo      E=Eliminado
 
   ── User ────────────────────────────────────────────
   us_in_veterinarian:     S=Si          N=No

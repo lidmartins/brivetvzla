@@ -4,6 +4,8 @@ import com.brivetvzla.backend.model.enums.TipoCercado;
 import com.brivetvzla.backend.model.enums.TipoVivienda;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Sección "Condiciones del refugio" (paso 4) del formulario "Registrar Refugio Temporal".
@@ -18,6 +20,8 @@ import jakarta.validation.constraints.Size;
  *   - Checkbox de términos y condiciones
  * </pre>
  */
+@Getter
+@Setter
 public class CondicionesRefugioRequest {
 
     /**
@@ -60,23 +64,4 @@ public class CondicionesRefugioRequest {
      */
     private boolean aceptaTerminos;
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public Boolean getTieneMascotasPropias() { return tieneMascotasPropias; }
-    public void setTieneMascotasPropias(Boolean tieneMascotasPropias) { this.tieneMascotasPropias = tieneMascotasPropias; }
-
-    public String getDescripcionMascotasPropias() { return descripcionMascotasPropias; }
-    public void setDescripcionMascotasPropias(String descripcionMascotasPropias) { this.descripcionMascotasPropias = descripcionMascotasPropias; }
-
-    public TipoVivienda getTipoVivienda() { return tipoVivienda; }
-    public void setTipoVivienda(TipoVivienda tipoVivienda) { this.tipoVivienda = tipoVivienda; }
-
-    public TipoCercado getTipoCercado() { return tipoCercado; }
-    public void setTipoCercado(TipoCercado tipoCercado) { this.tipoCercado = tipoCercado; }
-
-    public String getNotasAdicionales() { return notasAdicionales; }
-    public void setNotasAdicionales(String notasAdicionales) { this.notasAdicionales = notasAdicionales; }
-
-    public boolean isAceptaTerminos() { return aceptaTerminos; }
-    public void setAceptaTerminos(boolean aceptaTerminos) { this.aceptaTerminos = aceptaTerminos; }
 }

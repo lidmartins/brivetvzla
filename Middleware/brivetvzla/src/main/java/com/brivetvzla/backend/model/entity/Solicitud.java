@@ -3,9 +3,12 @@ package com.brivetvzla.backend.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "solicitud")
+@Getter
 public class Solicitud {
 
     @Id
@@ -14,41 +17,50 @@ public class Solicitud {
     private Integer id;
 
     // FK → animal
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "so_an_cd_animal", nullable = false)
     private Animal animal;
 
     // FK → contacto
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "so_co_cd_contacto", nullable = false)
     private Contacto contacto;
 
     // FK → ubicacion
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "so_ur_cd_ubicacion", nullable = false)
     private Ubicacion ubicacion;
 
     // 'P'=Perdida | 'E'=Encontrada
+    @Setter
     @Column(name = "so_tp_solicitud", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String tipo;
 
+    @Setter
     @Column(name = "so_dt_evento", nullable = false)
     private LocalDateTime fechaEvento;
 
-    // 'P'=Pendiente | 'R'=Rechazada | 'A'=Activa
+    // 'P'=Pendiente | 'R'=Rechazada | 'A'=Activa | 'C'=Reunida | 'T'=Adoptada | 'E'=Eliminada
+    @Setter
     @Column(name = "so_st_solicitud", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String estado = "P";
 
-    // Solo visible para el dashboard veterinario — nunca exponer al público
-    @JsonIgnore
+    // Siempre visible en el JSON — el backend no filtra este campo, el FE
+    // decide si lo muestra o no según la pantalla (público vs dashboard vet).
+    @Setter
     @Column(name = "so_de_observacion_vet", columnDefinition = "TEXT")
     private String observacionVet;
 
     // Ruta interna S3 — nunca exponer al cliente
+    @Setter
     @JsonIgnore
     @Column(name = "so_de_s3_folder_path", nullable = false, length = 500)
     private String s3FolderPath;
 
+    @Setter
     @Column(name = "so_de_main_photo_url", nullable = false, length = 500)
     private String mainPhotoUrl;
 
@@ -68,38 +80,4 @@ public class Solicitud {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    // ── Getters & Setters ──────────────────────────────────────────────────────
-
-    public Integer getId() { return id; }
-
-    public Animal getAnimal() { return animal; }
-    public void setAnimal(Animal animal) { this.animal = animal; }
-
-    public Contacto getContacto() { return contacto; }
-    public void setContacto(Contacto contacto) { this.contacto = contacto; }
-
-    public Ubicacion getUbicacion() { return ubicacion; }
-    public void setUbicacion(Ubicacion ubicacion) { this.ubicacion = ubicacion; }
-
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-
-    public LocalDateTime getFechaEvento() { return fechaEvento; }
-    public void setFechaEvento(LocalDateTime fechaEvento) { this.fechaEvento = fechaEvento; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public String getObservacionVet() { return observacionVet; }
-    public void setObservacionVet(String observacionVet) { this.observacionVet = observacionVet; }
-
-    public String getS3FolderPath() { return s3FolderPath; }
-    public void setS3FolderPath(String s3FolderPath) { this.s3FolderPath = s3FolderPath; }
-
-    public String getMainPhotoUrl() { return mainPhotoUrl; }
-    public void setMainPhotoUrl(String mainPhotoUrl) { this.mainPhotoUrl = mainPhotoUrl; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

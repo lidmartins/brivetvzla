@@ -6,6 +6,8 @@ import com.brivetvzla.backend.model.enums.TamanioAnimal;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Sección "Animal" del formulario "Reportar una mascota".
@@ -24,6 +26,8 @@ import jakarta.validation.constraints.Size;
  *   - Necesita atención médica urgente (checkbox)
  * </pre>
  */
+@Getter
+@Setter
 public class AnimalRequest {
 
     /** an_nm_animal — Nombre del animal (puede ser null si es encontrado y desconocido) */
@@ -74,35 +78,4 @@ public class AnimalRequest {
      */
     private boolean requiereAtencionMedica = false;
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public EspecieAnimal getEspecie() { return especie; }
-    public void setEspecie(EspecieAnimal especie) { this.especie = especie; }
-
-    public String getEspecieOtro() { return especieOtro; }
-    public void setEspecieOtro(String especieOtro) { this.especieOtro = especieOtro; }
-
-    public String getRaza() { return raza; }
-    public void setRaza(String raza) { this.raza = raza; }
-
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-
-    public TamanioAnimal getTamanio() { return tamanio; }
-    public void setTamanio(TamanioAnimal tamanio) { this.tamanio = tamanio; }
-
-    public SexoAnimal getSexo() { return sexo; }
-    public void setSexo(SexoAnimal sexo) { this.sexo = sexo; }
-
-    public Integer getEdadAproximada() { return edadAproximada; }
-    public void setEdadAproximada(Integer edadAproximada) { this.edadAproximada = edadAproximada; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public boolean isRequiereAtencionMedica() { return requiereAtencionMedica; }
-    public void setRequiereAtencionMedica(boolean requiereAtencionMedica) { this.requiereAtencionMedica = requiereAtencionMedica; }
 }

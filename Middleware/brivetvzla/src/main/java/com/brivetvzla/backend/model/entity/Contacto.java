@@ -2,9 +2,12 @@ package com.brivetvzla.backend.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "contacto")
+@Getter
 public class Contacto {
 
     @Id
@@ -12,28 +15,40 @@ public class Contacto {
     @Column(name = "co_cd_contacto")
     private Integer id;
 
+    @Setter
     @Column(name = "co_nm_first_name", nullable = false, length = 100)
     private String nombre;
 
+    @Setter
     @Column(name = "co_nm_last_name", nullable = false, length = 100)
     private String apellido;
 
+    @Setter
     @Column(name = "co_de_email", nullable = false, length = 100)
     private String email;
 
+    @Setter
     @Column(name = "co_de_phone", nullable = false, length = 20)
     private String telefono;
 
+    @Setter
     @Column(name = "co_de_whatsapp", nullable = false, length = 20)
     private String whatsapp;
 
     // 'W'=WhatsApp | 'P'=Phone | 'E'=Email | 'A'=Any
+    @Setter
     @Column(name = "co_tp_contact_method", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String metodoContacto = "W";
 
     // 'S'=Si | 'N'=No
+    @Setter
     @Column(name = "co_in_allow_public", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String permitirPublico = "S";
+
+    // 'A'=Activo | 'E'=Eliminado — se marca cuando se elimina (soft delete) la solicitud asociada
+    @Setter
+    @Column(name = "co_st_contacto", nullable = false, length = 1, columnDefinition = "CHAR(1)")
+    private String estadoContacto = "A";
 
     @Column(name = "co_dt_created", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -50,32 +65,4 @@ public class Contacto {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    // ── Getters & Setters ──────────────────────────────────────────────────────
-
-    public Integer getId() { return id; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-
-    public String getWhatsapp() { return whatsapp; }
-    public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
-
-    public String getMetodoContacto() { return metodoContacto; }
-    public void setMetodoContacto(String metodoContacto) { this.metodoContacto = metodoContacto; }
-
-    public String getPermitirPublico() { return permitirPublico; }
-    public void setPermitirPublico(String permitirPublico) { this.permitirPublico = permitirPublico; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

@@ -32,8 +32,8 @@ public class SecurityConfig {
                         .requestMatchers("/solicitud", "/solicitud/**").permitAll()   // POST crear + GET search
                         .requestMatchers("/estados", "/estados/**").permitAll()        // GET select de estados
 
-                        // ── Protegidos — solo veterinarios autenticados ──────────────
-                        .requestMatchers("/vet/**").hasRole("ADMIN")
+                        // ── Protegidos — veterinarios y admins autenticados ───────────
+                        .requestMatchers("/vet/**").hasAnyRole("ADMIN", "VET")
 
                         // ── Todo lo demás también requiere auth ──────────────────────
                         .anyRequest().authenticated()

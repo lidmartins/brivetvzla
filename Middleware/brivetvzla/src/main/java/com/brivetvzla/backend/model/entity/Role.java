@@ -2,9 +2,12 @@ package com.brivetvzla.backend.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "role")
+@Getter
 public class Role {
 
     @Id
@@ -13,10 +16,12 @@ public class Role {
     private Integer id;
 
     // 'ADMIN' | 'VET' | 'PUBLICO' | 'SUPERADMIN'
+    @Setter
     @Column(name = "ro_nm_role", nullable = false, unique = true, length = 20)
     private String nombre;
 
     // 'A'=Activo | 'I'=Inactivo
+    @Setter
     @Column(name = "ro_st_role", nullable = false, length = 1, columnDefinition = "CHAR(1)")
     private String estado = "A";
 
@@ -35,17 +40,4 @@ public class Role {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    // ── Getters & Setters ──────────────────────────────────────────────────────
-
-    public Integer getId() { return id; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

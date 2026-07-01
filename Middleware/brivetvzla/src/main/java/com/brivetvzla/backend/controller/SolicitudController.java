@@ -32,27 +32,41 @@ public class SolicitudController {
     }
 
     /**
-     * Búsqueda pública para las secciones "Mascotas Perdidas" / "Mascotas Encontradas".
+     * Búsqueda pública para las secciones "Mascotas Perdidas" / "Mascotas Encontradas"
+     * y para "Reportes recientes" del home (mezcla ambos tipos).
      *
      * Ejemplos:
-     *   GET /solicitud/search?tipo=PERDIDA
+     *   GET /solicitud/search                          → todo, mezclado (home)
+     *   GET /solicitud/search?tipo=PERDIDA              → solo perdidas
      *   GET /solicitud/search?tipo=PERDIDA&especie=PERRO
      *   GET /solicitud/search?tipo=ENCONTRADA&ciudad=Caracas
      *   GET /solicitud/search?tipo=PERDIDA&estadoId=10
      *
-     * @param tipo     obligatorio: PERDIDA o ENCONTRADA
-     * @param especie  opcional: PERRO o GATO
+     * @param tipo     opcional: PERDIDA o ENCONTRADA. Si se omite, trae ambos tipos
+     *                 mezclados y ordenados por fecha — usado en "Reportes recientes".
+     * @param especie  opcional: PERRO o GATO. Si se omite, trae todas las especies
+     *                 — usado en la pestaña "Todos".
      * @param estadoId opcional: filtra por estado venezolano
      * @param ciudad   opcional: búsqueda parcial de ciudad
      */
     @GetMapping("/search")
     public ResponseEntity<List<Solicitud>> searchSolicitudes(
-            @RequestParam TipoSolicitud tipo,
+            @RequestParam(required = false) TipoSolicitud tipo,
             @RequestParam(required = false) EspecieAnimal especie,
             @RequestParam(required = false) Integer estadoId,
             @RequestParam(required = false) String ciudad) {
 
         List<Solicitud> solicitudes = solicitudService.searchSolicitudes(tipo, especie, estadoId, ciudad);
         return ResponseEntity.ok(solicitudes);
+    }
+
+    /**
+     * Detalle público de una solicitud individual — página de detalle de una
+     * mascota perdida/encontrada. Excluye rechazadas y eliminadas (404 si aplica).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Solicitud> getSolicitudById(@PathVariable Integer id) {
+        Solicitud solicitud = solicitudService.getSolicitudPublicaById(id);
+        return ResponseEntity.ok(solicitud);
     }
 }

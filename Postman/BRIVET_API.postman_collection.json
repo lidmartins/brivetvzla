@@ -1,0 +1,538 @@
+{
+  "info": {
+    "name": "BRIVET - API",
+    "description": "Colección actualizada: login, solicitud (público, con detalle por id) y dashboard veterinario protegido (/vet/solicitud, con listado, detalle, actualización y soft-delete). observacionVet solo aparece en las respuestas de /vet/**.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "solicitud_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    console.log('Token guardado en {{token}}');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vet@brivetvzla.com\",\n  \"password\": \"demo1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login del veterinario. Guarda el token en la variable de colección {{token}} automáticamente vía el test script."
+          }
+        },
+        {
+          "name": "Login - credenciales inválidas (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vet@brivetvzla.com\",\n  \"password\": \"password-incorrecto\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Debe responder 401 Unauthorized."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Solicitud (Público)",
+      "item": [
+        {
+          "name": "Crear Solicitud - PERDIDA (perro)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('solicitud_id', jsonData.id);",
+                  "    console.log('solicitud_id guardado: ' + jsonData.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"PERDIDA\",\n  \"animal\": {\n    \"nombre\": \"Luna\",\n    \"especie\": \"PERRO\",\n    \"raza\": \"Mestizo\",\n    \"color\": \"Marrón y blanco\",\n    \"tamanio\": \"MEDIANO\",\n    \"sexo\": \"HEMBRA\",\n    \"edadAproximada\": 3,\n    \"descripcion\": \"Tiene una mancha blanca en el pecho, collar rojo\",\n    \"requiereAtencionMedica\": false\n  },\n  \"ubicacion\": {\n    \"estadoId\": 1,\n    \"ciudad\": \"Maracay\",\n    \"direccion\": \"Av. Bolívar, cerca del CC Hiper Katal\",\n    \"referencia\": \"Frente a la farmacia\",\n    \"latitud\": 10.246,\n    \"longitud\": -67.596\n  },\n  \"contacto\": {\n    \"nombre\": \"Ana\",\n    \"apellido\": \"Martins\",\n    \"email\": \"ana@example.com\",\n    \"telefono\": \"04141234567\",\n    \"whatsapp\": \"04141234567\",\n    \"metodoContacto\": \"WHATSAPP\",\n    \"permitirDatosPublicos\": true\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "fotos",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            },
+            "description": "multipart/form-data. La parte 'data' es el JSON del reporte (Content-Type: application/json). 'fotos' es opcional — actívala y adjunta archivos si quieres probar la subida a S3. La respuesta NO incluye observacionVet (vista Public)."
+          }
+        },
+        {
+          "name": "Crear Solicitud - ENCONTRADA (gato)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "value": "{\n  \"tipoSolicitud\": \"ENCONTRADA\",\n  \"animal\": {\n    \"nombre\": null,\n    \"especie\": \"GATO\",\n    \"raza\": \"Siamés\",\n    \"color\": \"Crema y marrón\",\n    \"tamanio\": \"PEQUENO\",\n    \"sexo\": null,\n    \"edadAproximada\": 1,\n    \"descripcion\": \"Encontrado cerca del parque, muy dócil\",\n    \"requiereAtencionMedica\": true\n  },\n  \"ubicacion\": {\n    \"estadoId\": 8,\n    \"ciudad\": \"Caracas\",\n    \"direccion\": \"Petare, sector Los Frailes\",\n    \"referencia\": \"Cerca del ambulatorio\",\n    \"latitud\": null,\n    \"longitud\": null\n  },\n  \"contacto\": {\n    \"nombre\": \"Carlos\",\n    \"apellido\": \"Perez\",\n    \"email\": \"carlos@example.com\",\n    \"telefono\": \"04241234567\",\n    \"whatsapp\": \"04241234567\",\n    \"metodoContacto\": \"PHONE\",\n    \"permitirDatosPublicos\": false\n  }\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "fotos",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud"]
+            }
+          }
+        },
+        {
+          "name": "Buscar - Home (mezclado, sin tipo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"]
+            },
+            "description": "tipo es opcional. Sin él, mezcla PERDIDA + ENCONTRADA ordenadas por fecha — usado en 'Reportes recientes' del home."
+          }
+        },
+        {
+          "name": "Buscar - Perdidas (Todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" }
+              ]
+            },
+            "description": "Pestaña 'Todos' de Mascotas Perdidas: tipo obligatorio, especie omitido."
+          }
+        },
+        {
+          "name": "Buscar - Perdidas + Perro",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&especie=PERRO",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "especie", "value": "PERRO" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar - Perdidas + Gato",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&especie=GATO",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "especie", "value": "GATO" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar - Encontradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=ENCONTRADA",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "ENCONTRADA" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar - filtro por ciudad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&ciudad=Maracay",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "ciudad", "value": "Maracay" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar - filtro por estado venezolano",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&estadoId=1",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "estadoId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar - especie inválida (debe dar 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/search?tipo=PERDIDA&especie=OTRO",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "search"],
+              "query": [
+                { "key": "tipo", "value": "PERDIDA" },
+                { "key": "especie", "value": "OTRO" }
+              ]
+            },
+            "description": "OTRO ya no es un valor válido (se eliminó de la interfaz). Especie está tipada a EspecieAnimal (PERRO|GATO), Spring debe rechazar esto con 400."
+          }
+        },
+        {
+          "name": "Detalle por id (público)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "{{solicitud_id}}"]
+            },
+            "description": "NUEVO. Página de detalle de una mascota perdida/encontrada. Excluye rechazadas y eliminadas (404 en esos casos). La respuesta NO incluye observacionVet (vista Public)."
+          }
+        },
+        {
+          "name": "Detalle por id - rechazada/eliminada (debe dar 404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/solicitud/999999",
+              "host": ["{{base_url}}"],
+              "path": ["solicitud", "999999"]
+            },
+            "description": "Prueba con un id inexistente, o con el id de una solicitud que ya rechazaste/eliminaste desde el dashboard vet — en ambos casos debe dar 404, el público no debe poder verla."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Solicitud (Vet - Protegido)",
+      "item": [
+        {
+          "name": "Listar todas (dashboard, sin filtro)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud"]
+            },
+            "description": "NUEVO. Listado completo para el dashboard después del login — a diferencia de la búsqueda pública, NO excluye ningún estado (incluye pendientes, rechazadas y eliminadas). Cada item incluye observacionVet (vista Vet)."
+          }
+        },
+        {
+          "name": "Listar - solo PENDIENTE",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud?estado=PENDIENTE",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud"],
+              "query": [
+                { "key": "estado", "value": "PENDIENTE" }
+              ]
+            },
+            "description": "estado acepta: PENDIENTE, RECHAZADA, ACTIVA, REUNIDA, ADOPTADA, ELIMINADA."
+          }
+        },
+        {
+          "name": "Listar - sin token (debe dar 401/403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud"]
+            }
+          }
+        },
+        {
+          "name": "Detalle por id (vet, con observacionVet)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            },
+            "description": "NUEVO. A diferencia de GET /solicitud/{id} (público), este SÍ incluye observacionVet, y no excluye ningún estado."
+          }
+        },
+        {
+          "name": "PUT - Aprobar (ACTIVA)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ACTIVA\",\n  \"observacionVet\": \"Reporte verificado, se ve consistente.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            },
+            "description": "Requiere Bearer token con rol ADMIN o VET. estado acepta: PENDIENTE, RECHAZADA, ACTIVA, REUNIDA, ADOPTADA, ELIMINADA. La respuesta incluye observacionVet — confírmalo en el JSON de vuelta."
+          }
+        },
+        {
+          "name": "PUT - Rechazar (RECHAZADA)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"RECHAZADA\",\n  \"observacionVet\": \"Datos de contacto incompletos, no se puede verificar.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            }
+          }
+        },
+        {
+          "name": "PUT - Marcar Reunida (REUNIDA)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"REUNIDA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            },
+            "description": "observacionVet es opcional — este request no la envía."
+          }
+        },
+        {
+          "name": "PUT - Marcar Adoptada (ADOPTADA)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ADOPTADA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            }
+          }
+        },
+        {
+          "name": "PUT - sin token (debe dar 401/403)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ACTIVA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            },
+            "description": "Sin Authorization header. Debe rechazar."
+          }
+        },
+        {
+          "name": "PUT - id inexistente (debe dar 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ACTIVA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/999999",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "999999"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - eliminar (soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            },
+            "description": "Marca estado='E' en solicitud, animal, contacto y ubicacion. No borra ninguna fila ni fotos en S3. Devuelve 200 con la solicitud actualizada (incluye observacionVet)."
+          }
+        },
+        {
+          "name": "DELETE - sin token (debe dar 401/403)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/{{solicitud_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "{{solicitud_id}}"]
+            }
+          }
+        },
+        {
+          "name": "DELETE - id inexistente (debe dar 404)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vet/solicitud/999999",
+              "host": ["{{base_url}}"],
+              "path": ["vet", "solicitud", "999999"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

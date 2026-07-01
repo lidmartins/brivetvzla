@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
@@ -23,4 +24,17 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             @Param("estadoId") Integer estadoId,
             @Param("ciudad") String ciudad
     );
+
+    /**
+     * Detalle público de una solicitud por id (excluye rechazadas/eliminadas).
+     */
+    @Query(name = "Solicitud.findByIdPublic")
+    Optional<Solicitud> findByIdPublic(@Param("id") Integer id);
+
+    /**
+     * Listado para el dashboard veterinario — sin exclusión de estados.
+     * estado es opcional (null trae todas).
+     */
+    @Query(name = "Solicitud.findAllForVet")
+    List<Solicitud> findAllForVet(@Param("estado") String estado);
 }

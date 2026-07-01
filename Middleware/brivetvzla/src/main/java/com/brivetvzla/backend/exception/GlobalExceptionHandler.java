@@ -1,5 +1,8 @@
+
 package com.brivetvzla.backend.exception;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -30,6 +33,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        final String correlationId = MDC.get("correlationId");
+        log.warn("Resource not found for correlation-id: {}", correlationId);
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false),
+                correlationId
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> globleExcpetionHandler(Exception ex, WebRequest request) {
         // The correlationId is automatically added to the log message by the Logback pattern.
@@ -55,48 +72,15 @@ public class GlobalExceptionHandler {
 }
 
 class ErrorDetails {
-    private Date timestamp;
-    private String message;
-    private String details;
-    private String correlationId;
+    @Getter @Setter private Date timestamp;
+    @Getter @Setter private String message;
+    @Getter @Setter private String details;
+    @Getter @Setter private String correlationId;
 
     public ErrorDetails(Date timestamp, String message, String details, String correlationId) {
         this.timestamp = timestamp;
         this.message = message;
         this.details = details;
-        this.correlationId = correlationId;
-    }
-
-    // Getters and Setters
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 }

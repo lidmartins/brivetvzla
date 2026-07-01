@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="3">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="4">
   <diagram id="Py6Jmr1tppLLnCGkO6J5" name="ER">
     <mxGraphModel dx="1434" dy="854" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -176,6 +176,65 @@
         </mxCell>
         <mxCell id="lSobodwmayPqVnGuFX_M-19" value="&lt;table class=&quot;min-w-full border-collapse text-sm leading-[1.7] whitespace-normal&quot;&gt;&lt;thead class=&quot;text-left&quot;&gt;&lt;tr&gt;&lt;th class=&quot;text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold&quot; scope=&quot;col&quot;&gt;Rol&lt;/th&gt;&lt;th class=&quot;text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold&quot; scope=&quot;col&quot;&gt;Acceso&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;&lt;strong&gt;Público&lt;/strong&gt;&lt;/td&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;Ver mascotas perdidas, encontradas, refugios, adopciones. Llenar formularios.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;&lt;strong&gt;Veterinario&lt;/strong&gt;&lt;/td&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;Panel privado para revisar y aprobar/rechazar solicitudes de adopción&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;&lt;strong&gt;Admin&lt;/strong&gt;&lt;/td&gt;&lt;td class=&quot;border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top&quot;&gt;Gestión general, moderar reportes, gestionar veterinarios&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="660" y="210" width="510" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="7yRGSBw6uUs2K_-7adIB" name="ws-endpoints">
+    <mxGraphModel dx="984" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="79mTWlEPt0R11jK0_R5U-2" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;Refugio/update&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="60" y="710" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-3" value="«endpoint»&lt;br&gt;&lt;b&gt;Refugio/&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="90" y="530" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-4" value="«endpoint»&lt;br&gt;&lt;b&gt;Refugio/search&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="90" y="590" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-5" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;Refugio/delete&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="60" y="650" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-6" value="«endpoint»&lt;br&gt;&lt;b&gt;solicitud/search&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="90" y="210" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-7" value="«endpoint»&lt;br&gt;&lt;b&gt;solicitud/&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="90" y="155" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-8" value="«endpoint»&#xa;auth/login" style="fontColor=#333333;textShadow=0;whiteSpace=wrap;fontStyle=0;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="90" y="70" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-9" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;animal/update&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-10" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;animal/search&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="440" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-11" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;solicitud/delete&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="320" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-12" value="«endpoint»&lt;br&gt;/vet/&lt;b&gt;solicitud/update&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="263" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-13" value="status/description" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="200" y="390" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-14" value="status/description" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="200" y="273" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-15" value="status/description" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="200" y="730" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-16" value="«endpoint»&lt;br&gt;&lt;b&gt;/vet/dashboard/stats&lt;/b&gt;" style="html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-17" value="{ animalesRegistrados, casosPendientes, refugiosCoordinados }" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="190" y="788" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="79mTWlEPt0R11jK0_R5U-18" value="Público   → POST /solicitud&lt;br&gt;Público   → GET  /solicitud/search&lt;div&gt;&lt;br&gt;Protegido → PUT  /vet/solicitud/{id}&lt;br&gt;Protegido → DELETE /vet/solicitud/{id}&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Público → POST /refugio&lt;br&gt;Público → GET /refugio/search&lt;br&gt;Protegido → PUT  /vet/refugio/{id}&lt;br&gt;Protegido → DELETE /vet/refugio/{id}&lt;/div&gt;&lt;div&gt;&lt;br&gt;Protegido → PUT /vet/animal/seach&lt;br&gt;&lt;/div&gt;&lt;div&gt;Protegido → PUT  /vet/animal/{id}&lt;/div&gt;&lt;div&gt;&lt;br&gt;Protegido → GET  /vet/dashboard/stats&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="460" y="215" width="230" height="230" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * Sección "Animales" del formulario "Registrar Refugio Temporal" (paso 3).
@@ -22,6 +25,8 @@ import java.util.List;
  *       · Animales adultos mayores
  * </pre>
  */
+@Getter
+@Setter
 public class AnimalesRefugioRequest {
 
     /**
@@ -56,17 +61,4 @@ public class AnimalesRefugioRequest {
      */
     private List<NecesidadEspecial> necesidadesEspeciales;
 
-    // ── Getters & Setters ─────────────────────────────────────────────────────
-
-    public EspecieRefugio getEspecieAceptada() { return especieAceptada; }
-    public void setEspecieAceptada(EspecieRefugio especieAceptada) { this.especieAceptada = especieAceptada; }
-
-    public Integer getCapacidadTotal() { return capacidadTotal; }
-    public void setCapacidadTotal(Integer capacidadTotal) { this.capacidadTotal = capacidadTotal; }
-
-    public Integer getDiasDisponible() { return diasDisponible; }
-    public void setDiasDisponible(Integer diasDisponible) { this.diasDisponible = diasDisponible; }
-
-    public List<NecesidadEspecial> getNecesidadesEspeciales() { return necesidadesEspeciales; }
-    public void setNecesidadesEspeciales(List<NecesidadEspecial> necesidadesEspeciales) { this.necesidadesEspeciales = necesidadesEspeciales; }
 }
