@@ -1,0 +1,7 @@
+Backend/.idea
+brivetvzla-backend-dev_accessKeys.csv
+Dockerfile
+01_schema.sql
+02_procedures.sql
+.$ER.drawio.bkp
+docker-compose.yml
