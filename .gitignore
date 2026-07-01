@@ -5,3 +5,6 @@ Dockerfile
 02_procedures.sql
 .$ER.drawio.bkp
 docker-compose.yml
+FE/brivetvzla/dist
+FE/brivetvzla/.angular
+FE/brivetvzla/node_modules
