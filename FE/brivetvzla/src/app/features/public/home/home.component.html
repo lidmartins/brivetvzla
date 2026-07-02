@@ -7,7 +7,7 @@
         <p>Red coordinada por médicos veterinarios para rescatar, refugiar y reunir mascotas con sus familias durante
           desastres naturales.</p>
         <div class="hero-cta">
-          <button class="cta-coral" routerLink="/perdidas">📣 Reportar Mascota</button>
+          <button class="cta-coral" (click)="openReportModal()">📣 Reportar Mascota</button>
         </div>
         <div class="hero-stats">
           <div>
@@ -207,61 +207,37 @@
       <button class="btn-out" routerLink="/perdidas">Ver todos</button>
     </div>
     <div class="strip" id="latestStrip">
+      @for (r of recentReports(); track r.id) {
       <div class="mini">
-        <div class="photo" style="background:linear-gradient(140deg,#E8F2FA,#c8dff0)"><span class="pw">🐾</span><span
-            class="badge lost">🔴 PERDIDO</span><span class="mono"
-            style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · perro</span></div>
+        <div class="photo" 
+             [style.background-image]="r.mainPhotoUrl ? 'url(' + r.mainPhotoUrl + ')' : (r.tipo === 'P' ? 'linear-gradient(140deg,#FEF2F2,#fdecec)' : 'linear-gradient(140deg,#F0FDF4,#e7f5ef)')"
+             style="background-size: cover; background-position: center;">
+          <span class="pw">🐾</span>
+          @if (r.tipo === 'P') {
+          <span class="badge lost">🔴 PERDIDO</span>
+          } @else {
+          <span class="badge found">🟢 ENCONTRADO</span>
+          }
+          <span class="mono" style="position:absolute;bottom:7px;right:9px;font-size:9.5px">
+            {{ r.animal?.especie === 'P' ? 'perro' : (r.animal?.especie === 'G' ? 'gato' : 'otro') }}
+          </span>
+        </div>
+        <div class="registry-id">{{ formatRegistryId(r.id) }}</div>
         <div class="body">
-          <div class="name">Luna</div>
-          <div style="font-size:12.5px;color:#8a938d">Mestizo mediano</div>
-          <div class="meta" style="margin-top:9px">📍 Maracay, Aragua</div>
-          <div class="meta t">🕒 hace 2 horas</div>
+          <div class="name">{{ r.tipo === 'E' && !r.animal?.nombre ? 'Encontrado' : r.animal?.nombre }}</div>
+          <div style="font-size:12.5px;color:#8a938d">
+            {{ r.animal?.raza }} {{ r.animal?.tamanio === 'P' ? 'pequeño' : (r.animal?.tamanio === 'M' ? 'mediano' :
+            (r.animal?.tamanio === 'G' ? 'grande' : '')) }}
+          </div>
+          <div class="meta" style="margin-top:9px">📍 {{ r.ubicacion?.ciudad }}, {{ r.ubicacion?.estado?.nombre }}</div>
+          <div class="meta t">🕒 {{ getRelativeTime(r.fechaEvento || r.createdAt) }}</div>
         </div>
       </div>
-      <div class="mini">
-        <div class="photo" style="background:linear-gradient(140deg,#F1ECE0,#e5dcc9)"><span class="pw">🐾</span><span
-            class="badge found">🟢 ENCONTRADO</span><span class="mono"
-            style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · perro</span></div>
-        <div class="body">
-          <div class="name">Encontrado</div>
-          <div style="font-size:12.5px;color:#8a938d">Mestizo marrón</div>
-          <div class="meta" style="margin-top:9px">📍 La Victoria, Aragua</div>
-          <div class="meta t">🕒 hace 1 hora</div>
-        </div>
+      } @empty {
+      <div style="padding: 20px; color: var(--muted); font-size: 14px; text-align: center; width: 100%;">
+        No hay reportes recientes.
       </div>
-      <div class="mini">
-        <div class="photo" style="background:linear-gradient(140deg,#F1ECE0,#e5dcc9)"><span class="pw">🐾</span><span
-            class="badge lost">🔴 PERDIDO</span><span class="mono"
-            style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · gato</span></div>
-        <div class="body">
-          <div class="name">Pelusa</div>
-          <div style="font-size:12.5px;color:#8a938d">Siamés</div>
-          <div class="meta" style="margin-top:9px">📍 Petare, Caracas</div>
-          <div class="meta t">🕒 hace 3 horas</div>
-        </div>
-      </div>
-      <div class="mini">
-        <div class="photo" style="background:linear-gradient(140deg,#E6F1E9,#d2e6d9)"><span class="pw">🐾</span><span
-            class="badge found">🟢 ENCONTRADO</span><span class="mono"
-            style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · perro</span></div>
-        <div class="body">
-          <div class="name">Encontrado</div>
-          <div style="font-size:12.5px;color:#8a938d">Pastor, collar azul</div>
-          <div class="meta" style="margin-top:9px">📍 Valencia, Carabobo</div>
-          <div class="meta t">🕒 hace 9 horas</div>
-        </div>
-      </div>
-      <div class="mini">
-        <div class="photo" style="background:linear-gradient(140deg,#E6F1E9,#d2e6d9)"><span class="pw">🐾</span><span
-            class="badge lost">🔴 PERDIDO</span><span class="mono"
-            style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · gato</span></div>
-        <div class="body">
-          <div class="name">Michi</div>
-          <div style="font-size:12.5px;color:#8a938d">Criollo atigrado</div>
-          <div class="meta" style="margin-top:9px">📍 Valencia, Carabobo</div>
-          <div class="meta t">🕒 hace 5 horas</div>
-        </div>
-      </div>
+      }
     </div>
   </section>
 </div>
@@ -294,6 +270,7 @@
       <p>Repórtalo en minutos. Si puedes, resguárdalo en un lugar seguro antes de reportar — así nuestro equipo
         podrá ir a buscarlo. Un veterinario revisará el caso y te guiará en los siguientes pasos.</p>
     </div>
-    <button routerLink="/perdidas">🟢 Reportar Encontrada</button>
+    <button (click)="reportModal.openReportModal('E')">🟢 Reportar Encontrada</button>
   </div>
 </div>
+<app-report-modal #reportModal />

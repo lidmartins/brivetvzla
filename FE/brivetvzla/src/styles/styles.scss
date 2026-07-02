@@ -99,3 +99,12 @@ main {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+/* Registration */
+.registry-id {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+  margin-bottom: 14px;
+  margin-left: 10px;
+}

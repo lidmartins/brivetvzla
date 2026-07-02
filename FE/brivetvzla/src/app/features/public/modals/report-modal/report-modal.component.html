@@ -17,7 +17,7 @@
                     <b [class.done]="currentStep() >= 2">Animal</b>
                     <b [class.done]="currentStep() >= 3">Ubicación</b>
                     <b [class.done]="currentStep() >= 4">Contacto</b>
-                    <b [class.done]="currentStep() >= 5">Fotos</b>
+                    <b [class.done]="currentStep() >= 5">Foto</b>
                 </div>
                 <div class="ptrack">
                     <div class="pfill" [style.width]="(currentStep() / 5 * 100) + '%'"></div>
@@ -67,30 +67,33 @@
                         <div class="frow">
                             <div>
                                 <label>Nombre (si lo sabes)</label>
-                                <input class="inp" formControlName="an_nm_animal" placeholder="Ej: Luna">
+                                <input class="inp" formControlName="nombre" placeholder="Ej: Luna">
                             </div>
                             <div>
                                 <label>Especie</label>
-                                <select class="inp" formControlName="an_tp_animal">
-                                    <option value="P">Perro</option>
-                                    <option value="G">Gato</option>
+                                <select class="inp" formControlName="especie">
+                                    <option value="PERRO">Perro</option>
+                                    <option value="GATO">Gato</option>
                                 </select>
                             </div>
                         </div>
                         <div class="frow">
-                            <div><label>Raza</label><input class="inp" placeholder="Mestizo, Labrador…"></div>
+                            <div>
+                                <label>Raza</label>
+                                <input class="inp" formControlName="raza" placeholder="Mestizo, Labrador…">
+                            </div>
                             <div>
                                 <label>Color</label>
-                                <input class="inp" formControlName="an_de_color" placeholder="Marrón y blanco">
-                                @if (hasRequiredError('an_de_color')) { <span class="err-msg">{{
-                                    getRequiredMessage('an_de_color')
+                                <input class="inp" formControlName="color" placeholder="Marrón y blanco">
+                                @if (hasRequiredError('color')) { <span class="err-msg">{{
+                                    getRequiredMessage('color')
                                     }}</span> }
                             </div>
                         </div>
                         <div class="frow">
                             <div>
                                 <label>Tamaño</label>
-                                <select class="inp" formControlName="an_tp_size">
+                                <select class="inp" formControlName="tamanio">
                                     <option value="P">Pequeño</option>
                                     <option value="M">Mediano</option>
                                     <option value="G">Grande</option>
@@ -98,7 +101,7 @@
                             </div>
                             <div>
                                 <label>Sexo</label>
-                                <select class="inp" formControlName="an_tp_sex">
+                                <select class="inp" formControlName="sexo">
                                     <option value="M">Macho</option>
                                     <option value="H">Hembra</option>
                                     <option value="N">No sé</option>
@@ -106,20 +109,20 @@
                             </div>
                             <div>
                                 <label>Edad aprox.</label>
-                                <input class="inp" placeholder="2 años">
+                                <input class="inp" type="number" formControlName="edadAproximada" placeholder="2">
                             </div>
                         </div>
                         <div>
                             <label>Descripción / señas particulares</label>
-                            <textarea class="inp" formControlName="an_de_animal"
+                            <textarea class="inp" formControlName="descripcion"
                                 placeholder="Collar rojo, mancha en la oreja…"></textarea>
-                            @if (hasRequiredError('an_de_animal')) { <span class="err-msg">{{
-                                getRequiredMessage('an_de_animal')
+                            @if (hasRequiredError('descripcion')) { <span class="err-msg">{{
+                                getRequiredMessage('descripcion')
                                 }}</span> }
                         </div>
                         <div style="background:#fdecec;border:1.5px solid #f5c2bc;border-radius:12px;padding:13px 15px">
                             <label class="check" style="align-items:flex-start;gap:10px">
-                                <input type="checkbox"
+                                <input type="checkbox" formControlName="requiereAtencionMedica"
                                     style="margin-top:2px;width:17px;height:17px;accent-color:#DC4A4A;flex-shrink:0">
                                 <div>
                                     <div style="font-weight:700;font-size:14px;color:#DC4A4A">🚨 El animal necesita
@@ -136,46 +139,55 @@
                 }
                 @if (currentStep() === 3) {
                 <div class="mstep active">
-                    <h4>Ubicación y fecha</h4>
+                    <h4>Ubicación</h4>
                     <div class="fcol">
                         <div class="frow">
-                            <div><label>Estado</label><select class="inp">
+                            <div>
+                                <label>Estado</label>
+                                <select class="inp" formControlName="estadoId">
                                     <option value="">Selecciona…</option>
-                                    <option>Amazonas</option>
-                                    <option>Anzoátegui</option>
-                                    <option>Apure</option>
-                                    <option>Aragua</option>
-                                    <option>Barinas</option>
-                                    <option>Bolívar</option>
-                                    <option>Carabobo</option>
-                                    <option>Cojedes</option>
-                                    <option>Delta Amacuro</option>
-                                    <option>Distrito Capital</option>
-                                    <option>Falcón</option>
-                                    <option>Guárico</option>
-                                    <option>La Guaira</option>
-                                    <option>Lara</option>
-                                    <option>Mérida</option>
-                                    <option>Miranda</option>
-                                    <option>Monagas</option>
-                                    <option>Nueva Esparta</option>
-                                    <option>Portuguesa</option>
-                                    <option>Sucre</option>
-                                    <option>Táchira</option>
-                                    <option>Trujillo</option>
-                                    <option>Yaracuy</option>
-                                    <option>Zulia</option>
-                                </select></div>
-                            <div><label>Ciudad / zona</label><input class="inp" placeholder="Maracay, El Limón…"></div>
+                                    <option value="1">Amazonas</option>
+                                    <option value="2">Anzoátegui</option>
+                                    <option value="3">Apure</option>
+                                    <option value="4">Aragua</option>
+                                    <option value="5">Barinas</option>
+                                    <option value="6">Bolívar</option>
+                                    <option value="7">Carabobo</option>
+                                    <option value="8">Cojedes</option>
+                                    <option value="9">Delta Amacuro</option>
+                                    <option value="10">Distrito Capital</option>
+                                    <option value="11">Falcón</option>
+                                    <option value="12">Guárico</option>
+                                    <option value="22">La Guaira</option>
+                                    <option value="13">Lara</option>
+                                    <option value="14">Mérida</option>
+                                    <option value="15">Miranda</option>
+                                    <option value="16">Monagas</option>
+                                    <option value="17">Nueva Esparta</option>
+                                    <option value="18">Portuguesa</option>
+                                    <option value="19">Sucre</option>
+                                    <option value="20">Táchira</option>
+                                    <option value="21">Trujillo</option>
+                                    <option value="23">Yaracuy</option>
+                                    <option value="24">Zulia</option>
+                                </select>
+                                @if (hasRequiredError('estadoId')) { <span class="err-msg">{{
+                                    getRequiredMessage('estadoId')
+                                    }}</span> }
+                            </div>
+                            <div>
+                                <label>Ciudad / zona</label>
+                                <input class="inp" formControlName="ciudad" placeholder="Maracay, El Limón…">
+                            </div>
                         </div>
-                        <div><label>Referencia del lugar</label><input class="inp"
-                                placeholder="Cerca de la plaza, sector…"></div>
-                        <div class="frow">
-                            <div><label>Fecha</label><input class="inp" type="date"></div>
-                            <div><label>Hora aprox.</label><input class="inp" type="time"></div>
+                        <div>
+                            <label>Dirección</label>
+                            <input class="inp" formControlName="direccion" placeholder="Av. Principal, Edificio/Casa…">
                         </div>
-                        <div class="note"><span style="font-size:18px">📍</span><span>Podrás ajustar la ubicación exacta
-                                en el mapa después de enviar.</span></div>
+                        <div>
+                            <label>Referencia del lugar</label>
+                            <input class="inp" formControlName="referencia" placeholder="Cerca de la plaza, sector…">
+                        </div>
                     </div>
                 </div>
                 }
@@ -184,39 +196,79 @@
                     <h4>Tus datos de contacto</h4>
                     <div class="sub">Para que la familia o nuestro equipo pueda comunicarse contigo.</div>
                     <div class="fcol">
-                        <div><label>Nombre</label><input class="inp" placeholder="Tu nombre"></div>
+                        <div class="frow">
+                            <div>
+                                <label>Nombre</label>
+                                <input class="inp" formControlName="contactoNombre" placeholder="Tu nombre">
+                                @if (hasRequiredError('contactoNombre')) { <span class="err-msg">{{
+                                    getRequiredMessage('contactoNombre')
+                                    }}</span> }
+                            </div>
+                            <div>
+                                <label>Apellido</label>
+                                <input class="inp" formControlName="contactoApellido" placeholder="Tu apellido">
+                                @if (hasRequiredError('contactoApellido')) { <span class="err-msg">{{
+                                    getRequiredMessage('contactoApellido')
+                                    }}</span> }
+                            </div>
+                        </div>
                         <div class="frow">
                             <div>
                                 <label>Teléfono</label>
-                                <input class="inp" formControlName="an_telefono" placeholder="0414-1234567">
-                                @if (hasRequiredError('an_telefono')) { <span class="err-msg">{{
-                                    getRequiredMessage('an_telefono')
+                                <input class="inp" formControlName="contactoTelefono" placeholder="0414-1234567">
+                                @if (hasRequiredError('contactoTelefono')) { <span class="err-msg">{{
+                                    getRequiredMessage('contactoTelefono')
                                     }}</span> }
                             </div>
-                            <div><label>WhatsApp</label><input class="inp" placeholder="0414-1234567"></div>
+                            <div>
+                                <label>WhatsApp</label>
+                                <input class="inp" formControlName="contactoWhatsapp" placeholder="0414-1234567">
+                            </div>
                         </div>
-                        <div><label>Correo (opcional)</label><input class="inp" placeholder="tu@correo.com"></div>
-                        <label class="check"><input type="checkbox" checked="">Acepto que un veterinario revise y
-                            publique este reporte.</label>
+                        <div>
+                            <label>Correo (opcional)</label>
+                            <input class="inp" formControlName="contactoEmail" placeholder="tu@correo.com">
+                        </div>
+                        <label class="check" style="opacity: 0.6; cursor: not-allowed;">
+                            El envío de este reporte implica la aceptación de su revisión y difusión por parte de un
+                            veterinario </label>
                     </div>
                 </div>
                 }
                 @if (currentStep() === 5) {
                 <div class="mstep active">
-                    <h4>Fotos del animal</h4>
+                    <h4>Foto del animal</h4>
                     <div class="sub">Una buena foto multiplica las probabilidades de un reencuentro.</div>
-                    <div class="dropzone">
+                    <div class="dropzone" (dragover)="$event.preventDefault()" (drop)="onDrop($event)"
+                        (click)="fileInput.click()" style="cursor: pointer;">
+                        <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)"
+                            accept="image/*">
+                        @if (previewUrl) {
+                        <img [src]="previewUrl"
+                            style="max-height: 80px; max-width: 100%; border-radius: 8px; margin-bottom: 8px;">
+                        <b>Foto seleccionada</b>
+                        <small>Haz clic para cambiar la foto</small>
+                        } @else {
                         <div class="em">📸</div>
-                        <b>Arrastra tus fotos aquí</b>
+                        <b>Arrastra tu foto aquí</b>
                         <small>o haz clic para seleccionar · JPG, PNG hasta 10MB</small>
+                        }
                     </div>
-                    <div class="thumbs">
-                        <div class="thumb">🐾</div>
-                        <div class="thumb empty">+</div>
-                        <div class="thumb empty">+</div>
+                    @if (selectedFile) {
+                    <div class="thumbs" style="margin-top: 10px;">
+                        <div class="thumb"
+                            style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; background: #fff;">
+                            <span>🖼️ {{ selectedFile.name }}</span>
+                            <button type="button" (click)="removeFile(); $event.stopPropagation();"
+                                style="background: none; border: none; color: var(--lost); cursor: pointer; font-weight: bold; font-size: 14px; padding: 0 4px;">✕</button>
+                        </div>
                     </div>
+                    }
                     @if (submitError()) {
-                    <p style="color:#DC4A4A;font-size:14px;margin-top:16px">{{ submitError() }}</p>
+                    <p
+                        style="color:#DC4A4A;font-size:14px;margin-top:16px;background:#fdecec;border:1px solid #f5c2bc;padding:10px;border-radius:8px;">
+                        ⚠️ {{ submitError() }}
+                    </p>
                     }
                 </div>
                 }
@@ -226,8 +278,7 @@
 
         <div class="modal-foot">
             @if (submitSuccess()) {
-            <span></span>
-            <button class="m-next" type="button" (click)="closeModal()">Cerrar</button>
+            <button class="m-next" type="button" (click)="closeModal()" style="flex: 1;">Cerrar</button>
             } @else {
             <button class="m-back" type="button" (click)="prevStep()"
                 [style.visibility]="currentStep() === 1 ? 'hidden' : 'visible'">← Atrás</button>

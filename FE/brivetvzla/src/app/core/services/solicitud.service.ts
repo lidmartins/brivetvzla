@@ -31,7 +31,31 @@ export class SolicitudService {
     return this.http.get<Solicitud>(`${this.base}/${id}`);
   }
 
+  search(tipo?: 'PERDIDA' | 'ENCONTRADA' | '', especie?: 'PERRO' | 'GATO' | '', estadoId?: number, ciudad?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (tipo) params = params.set('tipo', tipo);
+    if (especie) params = params.set('especie', especie);
+    if (estadoId) params = params.set('estadoId', estadoId.toString());
+    if (ciudad) params = params.set('ciudad', ciudad);
+
+    const url = `${environment.apiUrl}${environment.endpoints.solicitudSearch}`;
+    return this.http.get<any[]>(url, { params });
+  }
+
   updateStatus(id: number, st: string, obs: string): Observable<Solicitud> {
     return this.http.patch<Solicitud>(`${this.base}/${id}/status`, { so_st_solicitud: st, so_de_observacion_vet: obs });
   }
+
+  create(payload: any, files?: File[]): Observable<any> {
+    const formData = new FormData();
+    formData.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+    if (files && files.length > 0) {
+      files.forEach(f => {
+        formData.append('fotos', f, f.name);
+      });
+    }
+    const url = `${environment.apiUrl}/solicitud`;
+    return this.http.post<any>(url, formData);
+  }
 }
+

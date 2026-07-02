@@ -15,25 +15,50 @@
         (click)="setFilter('dog')">🐕 Perro</button>
       <button class="chip" [class.active]="filter()==='cat'" [class.teal]="filter()==='cat'"
         (click)="setFilter('cat')">🐈 Gato</button>
-      <button class="chip" [class.active]="filter()==='other'" [class.teal]="filter()==='other'"
-        (click)="setFilter('other')">Otro</button>
     </div>
     <div class="divider"></div>
     <div class="search">
-      <i>📍</i>
-      <input type="text" placeholder="Ciudad o estado..." (input)="onSearch($event)">
+      <select class="inp" (change)="onStateChange($event)">
+        <option value="">Selecciona Estado…</option>
+        <option value="1">Amazonas</option>
+        <option value="2">Anzoátegui</option>
+        <option value="3">Apure</option>
+        <option value="4">Aragua</option>
+        <option value="5">Barinas</option>
+        <option value="6">Bolívar</option>
+        <option value="7">Carabobo</option>
+        <option value="8">Cojedes</option>
+        <option value="9">Delta Amacuro</option>
+        <option value="10">Distrito Capital</option>
+        <option value="11">Falcón</option>
+        <option value="12">Guárico</option>
+        <option value="22">La Guaira</option>
+        <option value="13">Lara</option>
+        <option value="14">Mérida</option>
+        <option value="15">Miranda</option>
+        <option value="16">Monagas</option>
+        <option value="17">Nueva Esparta</option>
+        <option value="18">Portuguesa</option>
+        <option value="19">Sucre</option>
+        <option value="20">Táchira</option>
+        <option value="21">Trujillo</option>
+        <option value="23">Yaracuy</option>
+        <option value="24">Zulia</option>
+      </select>
     </div>
     <span class="count">{{ filtered().length }} reportes</span>
   </div>
 
   <div class="grid">
-    @for (a of filtered(); track a.zone + a.time) {
-    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer" (click)="petCardModal.open(a)">
-      <div class="photo" [style.background]="a.color">
+    @for (a of filtered(); track a.id) {
+    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer"
+      (click)="petCardModal.open(a)">
+      <div class="photo" [style.background-image]="a.color" style="background-size: cover; background-position: center;">
         <span class="pw">🐾</span>
         <span class="badge found">🟢 ENCONTRADO</span>
         <span class="statuschip">{{ a.status }}</span>
       </div>
+      <div class="registry-id">{{ formatRegistryId(a.id) }}</div>
       <div class="body">
         <div class="title">
           <div class="pname">{{ a.name }}</div>
@@ -57,6 +82,7 @@
     }
   </div>
 </div>
-<button class="fab show" id="fab" data-report="encontrada" (click)="reportModal.openReportModal('E')">+ <span id="fabLabel">Reportar Mascota Encontrada</span></button>
+<button class="fab show" id="fab" data-report="encontrada" (click)="reportModal.openReportModal('E')">+ <span
+    id="fabLabel">Reportar Mascota Encontrada</span></button>
 <app-report-modal #reportModal />
 <app-pet-card-modal #petCardModal />
