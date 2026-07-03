@@ -2,8 +2,10 @@ package com.brivetvzla.backend.model.enums;
 
 /**
  * Sexo del animal.
- * Mapea la columna an_tp_sex en la BD.
- * "No sé" se envía como null desde el frontend.
+ * Mapea la columna an_tp_sex en la BD (CHAR(1)).
+ *
+ * NO_SE se deserializa correctamente desde el JSON de Angular
+ * y se trata como null al persistir — la BD guarda null en an_tp_sex.
  */
 public enum SexoAnimal {
 
@@ -11,7 +13,15 @@ public enum SexoAnimal {
     MACHO("M"),
 
     /** H — Hembra */
-    HEMBRA("H");
+    HEMBRA("H"),
+
+    /**
+     * null — No se sabe el sexo.
+     * Se acepta como valor del enum para que Angular pueda enviarlo
+     * explícitamente en vez de omitir el campo.
+     * SolicitudService lo trata como null al hacer animal.setSexo().
+     */
+    NO_SE(null);
 
     private final String codigo;
 
@@ -25,8 +35,8 @@ public enum SexoAnimal {
 
     public static SexoAnimal fromCodigo(String codigo) {
         for (SexoAnimal s : values()) {
-            if (s.codigo.equalsIgnoreCase(codigo)) return s;
+            if (s.codigo != null && s.codigo.equalsIgnoreCase(codigo)) return s;
         }
-        throw new IllegalArgumentException("Código de SexoAnimal inválido: " + codigo);
+        throw new IllegalArgumentException("Codigo de SexoAnimal invalido: " + codigo);
     }
 }
