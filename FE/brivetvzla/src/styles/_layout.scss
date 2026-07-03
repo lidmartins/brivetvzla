@@ -118,7 +118,7 @@
   }
 
   .lnk {
-    color: #6FD6C9;
+    color: #6aaed6;
     font-weight: 600;
     border-bottom: 1px solid rgba(111, 214, 201, .4);
     cursor: pointer;
@@ -976,6 +976,125 @@ footer {
     font-size: 12.5px;
     color: #5a7899;
   }
+}
+
+.vmain-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+  h1 {
+    font-weight: 800;
+    font-size: 27px;
+    color: var(--head);
+  }
+
+  p {
+    color: #8a938d;
+    font-size: 14.5px;
+    margin-top: 2px;
+  }
+}
+
+/* ── Sidebar ── */
+.vetlayout {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 28px 0 80px;
+}
+
+.sidebar {
+  background: var(--head);
+  border-radius: 18px;
+  padding: 20px 14px;
+  position: sticky;
+  top: 88px;
+}
+
+.sb-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+
+  .av {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+  }
+
+  b {
+    color: #fff;
+    font-weight: 700;
+    font-size: 13.5px;
+    font-family: 'Sora';
+  }
+
+  small {
+    color: #6a9fc0;
+    font-size: 11.5px;
+    display: block;
+  }
+}
+
+.sb-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+  text-align: start;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 11px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #8ab0d0;
+  width: 100%;
+  text-decoration: none;
+
+
+  .b {
+    margin-left: auto;
+    background: rgba(255, 255, 255, .18);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 999px;
+  }
+}
+
+.sb-item.active {
+  background: var(--teal);
+  color: #fff;
+  font-weight: 700;
+}
+
+.sb-exit {
+  width: 100%;
+  margin-top: 18px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: #8ab0d0;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px;
+  border-radius: 9px;
+  transition: .15s;
 }
 
 /* ── Responsive ── */

@@ -1,69 +1,133 @@
-<div class="vmain-head">
-  <div>
-    <h1>Dashboard</h1>
-    <p>Bienvenido · Resumen de actividad de emergencia</p>
+<div class="vv active" id="vv-panel">
+  <div class="vmain-head">
+    <div>
+      <h1>Panel de control</h1>
+      <p>{{ currentDate }}</p>
+    </div>
+    <button class="btn-teal" data-report="perdida" (click)="openReportModal()">+ Agregar animal</button>
   </div>
-</div>
-
-<div class="statgrid">
-  @for (s of stats; track s.l) {
+  <div class="statgrid" id="statGrid">
     <div class="stat">
       <div class="r">
-        <div class="ic" [style.background]="s.bg">{{ s.ic }}</div>
-        <span class="delta" [style.color]="s.deltaColor">{{ s.delta }}</span>
+        <span class="ic" style="background:#E8F2FA">🐾</span>
       </div>
-      <div class="n">{{ s.n }}</div>
-      <div class="l">{{ s.l }}</div>
+      <div class="n">{{ allRequests().length }}</div>
+      <div class="l">Animales registrados</div>
     </div>
-  }
-</div>
-
-<div class="panel">
-  <div class="panel-head">
-    <h3>Solicitudes recientes</h3>
-    <span class="pill-pending">{{ recentRequests.length }} pendientes</span>
-  </div>
-  <div class="table-scroll">
-    <div class="table">
-      <div class="trow thead">
-        <span>Solicitante</span>
-        <span>Animal</span>
-        <span>Fecha</span>
-        <span>Estado</span>
-        <span style="text-align:right">Acciones</span>
+    <div class="stat">
+      <div class="r">
+        <span class="ic" style="background:#fdeee9">📥</span>
       </div>
-      @for (r of recentRequests; track r.email) {
-        <div class="trow">
-          <div class="who">
-            <div class="av" [style.background]="r.bg">{{ r.initials }}</div>
-            <div><b>{{ r.name }}</b><small>{{ r.email }}</small></div>
-          </div>
-          <span class="animal">{{ r.animal }}</span>
-          <span class="date">{{ r.date }}</span>
-          <span class="stpill" [style.background]="r.statusBg" [style.color]="r.statusColor">{{ r.status }}</span>
-          <div class="acts">
-            <button class="bt-approve">✓ Aprobar</button>
-            <button class="bt-reject">✕ Rechazar</button>
-            <button class="bt-info">···</button>
-          </div>
+      <div class="n">{{ pendingRequests().length }}</div>
+      <div class="l">Casos pendientes</div>
+    </div>
+    <div class="stat">
+      <div class="r">
+        <span class="ic" style="background:#E6F1E9">🏠</span>
+      </div>
+      <div class="n">9</div>
+      <div class="l">Refugios coordinados</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Solicitudes reportadas recientes</h3>
+      <span class="pill-pending" id="pendPill">{{ pendingRequests().length }} por revisar</span>
+    </div>
+    <div class="table-scroll">
+      <div class="table">
+        <div class="trow thead">
+          <div>Reportado por</div>
+          <div>Animal</div>
+          <div>Fecha</div>
+          <div>Estado</div>
+          <div style="text-align:right">Cambiar estado</div>
         </div>
-      }
+        <div id="reqRows">
+          @for (r of recentRequests(); track r.id) {
+          <div class="trow">
+            <div class="who">
+              @let initials = getInitials(r.contacto?.nombre, r.contacto?.apellido);
+              @let style = getAvatarStyle(initials);
+              <div class="av" [style.background]="style.bg" [style.color]="style.color">{{ initials }}</div>
+              <div>
+                <b>{{ r.contacto?.nombre }} {{ r.contacto?.apellido }}</b>
+                <small>{{ r.ubicacion?.ciudad || 'Sin ciudad' }}, {{ r.ubicacion?.estado?.nombre }}</small>
+              </div>
+            </div>
+            <div class="animal">
+              <b>{{ r.animal?.nombre || 'Sin nombre' }}</b>
+              <small style="display:block;color:var(--muted)">
+                {{ r.animal?.especie === 'G' ? '🐈 Gato' : '🐕 Perro' }} · {{ r.animal?.raza || 'Mestizo' }}
+                {{ r.animal?.tamanio === 'P' ? 'pequeño' : (r.animal?.tamanio === 'G' ? 'grande' : 'mediano') }}
+              </small>
+              @if (r.animal?.requiereAtencionMedica) {
+              <span
+                style="background:#fdecec;color:#DC4A4A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px">🚨
+                Urgente</span>
+              }
+            </div>
+            <div class="date">{{ formatDate(r.fechaEvento) }}</div>
+            <div>
+              @if (r.estado === 'P') {
+              <span class="stpill" style="background:#fdeee9;color:#c4562f">⏳ Pendiente</span>
+              } @else if (r.estado === 'A') {
+              <span class="stpill" style="background:#eaf0fb;color:#3a5fb0">🔍 En revisión</span>
+              } @else if (r.estado === 'U' || r.estado === 'C') {
+              <span class="stpill" style="background:#e7f5ef;color:#1b7a55">✅ Encontrado</span>
+              } @else if (r.estado === 'T') {
+              <span class="stpill" style="background:#e7f5ef;color:#1b7a55">✅ Adoptado</span>
+              } @else if (r.estado === 'R') {
+              <span class="stpill" style="background:#f3f4f6;color:#6b7280">❌ Rechazado</span>
+              }
+            </div>
+            <div class="acts">
+              @if (r.estado === 'P') {
+              <button class="bt-approve" (click)="approve(r.id)" title="Aprobar reporte">🔍 Revisar</button>
+              <button class="bt-approve" (click)="markReunida(r.id)" title="Marcar como reunido/encontrado"
+                style="background:#e7f5ef;color:#1b7a55;border:1.5px solid #b6e0cb">✅ Encontrado</button>
+              } @else if (r.estado === 'A') {
+              <button class="bt-approve" (click)="markReunida(r.id)" title="Marcar como reunido/encontrado"
+                style="background:#e7f5ef;color:#1b7a55;border:1.5px solid #b6e0cb">✅ Encontrado</button>
+              } @else if (r.estado === 'U' || r.estado === 'C') {
+              <span class="resolved" style="color:#1b7a55;font-weight:600">✓ Encontrado</span>
+              } @else if (r.estado === 'T') {
+              <span class="resolved" style="color:#1b7a55;font-weight:600">✓ Adoptado</span>
+              } @else {
+              <span style="color:#6b7280">Sin acciones</span>
+              }
+            </div>
+          </div>
+          } @empty {
+          <div class="trow" style="justify-content: center; padding: 24px; color: var(--muted);">
+            No hay solicitudes recientes registradas.
+          </div>
+          }
+        </div>
+      </div>
     </div>
   </div>
-</div>
-
-<div class="animals">
-  <div class="h"><h3>Animales recientes</h3></div>
-  <div class="aglist">
-    @for (a of recentAnimals; track a.name) {
+  <div class="animals">
+    <div class="h">
+      <h3>Animales bajo gestión</h3>
+    </div>
+    <div class="aglist" id="animalsList">
+      @for (a of recentAnimals(); track a.name) {
       <div class="aitem">
-        <div class="av" [style.background]="a.bg">{{ a.ic }}</div>
+        <div class="av" [style.background]="'linear-gradient(140deg,' + a.stBg + ',#fff)'">{{ a.ic }}</div>
         <div>
           <b>{{ a.name }}</b>
           <small>{{ a.breed }}</small>
           <span class="st" [style.background]="a.stBg" [style.color]="a.stColor">{{ a.st }}</span>
         </div>
       </div>
-    }
+      } @empty {
+      <div class="aitem" style="grid-column: 1 / -1; justify-content: center; color: var(--muted); padding: 16px;">
+        No hay animales bajo gestión.
+      </div>
+      }
+    </div>
   </div>
 </div>
+
+<app-report-modal #reportModal />

@@ -1,50 +1,124 @@
-<div class="vmain-head">
-  <div>
-    <h1>Animales</h1>
-    <p>Registro de todos los animales en el sistema</p>
+<div class="vv active" id="vv-animales">
+  <div class="vmain-head">
+    <div>
+      <h1>Animales</h1>
+      <p>Todos los animales registrados en la plataforma</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="anFilterTp" class="vf-select">
+        <option value="todos">Todas las especies</option>
+        <option value="perro">🐕 Perros</option>
+        <option value="gato">🐈 Gatos</option>
+      </select>
+      <select id="anFilterSt" class="vf-select">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente">⏳ Revisión pendiente</option>
+        <option value="activo">✅ Activo</option>
+        <option value="revisado">🔍 Revisado</option>
+      </select>
+    </div>
   </div>
-</div>
-
-<div class="filterbar">
-  <div class="search">
-    <i>🔍</i>
-    <input type="text" placeholder="Buscar por nombre, raza, refugio…" (input)="onSearch($event)">
-  </div>
-  <select class="vf-select" (change)="statusFilter.set($any($event.target).value)">
-    <option value="all">Todos los estados</option>
-    <option value="perdida">Perdida</option>
-    <option value="perdido">Perdido</option>
-    <option value="encontrado">Encontrado</option>
-    <option value="en refugio">En refugio</option>
-    <option value="adoptado">Adoptado</option>
-  </select>
-  <span class="count">{{ filtered().length }} animales</span>
-</div>
-
-<div class="panel" style="margin-top:16px">
-  <div class="table-scroll">
-    <div class="vtable">
-      <div class="vtrow vthead" style="grid-template-columns:2fr 1.4fr 1.6fr 1fr 1fr">
-        <span>Animal</span>
-        <span>Raza</span>
-        <span>Refugio</span>
-        <span>Estado</span>
-        <span>Fecha</span>
-      </div>
-      @for (a of filtered(); track a.name) {
-        <div class="vtrow" style="grid-template-columns:2fr 1.4fr 1.6fr 1fr 1fr">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="aitem" style="border:none;padding:0;background:transparent">
-              <div class="av" [style.background]="a.bg" style="width:36px;height:36px;font-size:18px">{{ a.ic }}</div>
-            </div>
-            <b style="font-weight:600;color:#33403c">{{ a.name }}</b>
-          </div>
-          <span style="color:#6b756f">{{ a.breed }}</span>
-          <span style="color:#6b756f">{{ a.shelter }}</span>
-          <span class="stpill" [style.background]="a.stBg" [style.color]="a.stColor">{{ a.status }}</span>
-          <span style="color:#8a938d;font-size:13px">{{ a.date }}</span>
+  <div class="panel" style="margin-top:0">
+    <div class="panel-head">
+      <h3>Listado de animales</h3><span class="pill-pending" id="anCountPill">10 animales</span>
+    </div>
+    <div class="table-scroll">
+      <div class="vtable" style="min-width:740px">
+        <div class="vtrow vthead" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+          <div>Animal</div>
+          <div>Raza / Color</div>
+          <div>Especie</div>
+          <div>Tamaño</div>
+          <div>Rev. veterinaria</div>
+          <div style="text-align:right">Acciones</div>
         </div>
-      }
+        <div id="anRows">
+          <div class="vtrow" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+            <div class="who">
+              <div class="av" style="background:#E8F2FA">🐕</div>
+              <div><b>Luna</b><small>AN-001 · ♀ · 3 años</small><small style="color:var(--teal)">🏠 Refugio El
+                  Limón</small></div>
+            </div>
+            <div><span style="font-size:13.5px;color:var(--head)">Mestizo mediano</span><small
+                style="display:block;color:var(--muted)">Marrón con blanco</small></div>
+            <div style="font-size:20px">🐕</div>
+            <div style="font-size:13px;color:var(--head)">Mediano</div>
+            <div><span class="stpill" style="background:#E8F2FA;color:#0F4C76">✅ Activo</span>
+              <div
+                style="margin-top:4px;font-size:10.5px;font-weight:700;color:#0F4C76;background:#E8F2FA;padding:2px 6px;border-radius:6px;display:inline-block">
+                🩺 Rev. req.</div>
+            </div>
+            <div class="vtacts"><button class="bt-info" data-vm-an="AN-001" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+            <div class="who">
+              <div class="av" style="background:#FBE7E0">🐈</div>
+              <div><b>Michi</b><small>AN-002 · ♀ · 2 años</small></div>
+            </div>
+            <div><span style="font-size:13.5px;color:var(--head)">Criollo atigrado</span><small
+                style="display:block;color:var(--muted)">Gris y negro</small></div>
+            <div style="font-size:20px">🐈</div>
+            <div style="font-size:13px;color:var(--head)">Pequeño</div>
+            <div><span class="stpill" style="background:#eaf0fb;color:#3a5fb0">🔍 Revisado</span>
+              <div
+                style="margin-top:4px;font-size:10.5px;font-weight:700;color:#0F4C76;background:#E8F2FA;padding:2px 6px;border-radius:6px;display:inline-block">
+                🩺 Rev. req.</div>
+            </div>
+            <div class="vtacts"><button class="bt-info" data-vm-an="AN-002" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+            <div class="who">
+              <div class="av" style="background:#F1ECE0">🐕</div>
+              <div><b>Rocky</b><small>AN-003 · ♂ · 4 años</small><small style="color:var(--teal)">🏠 Patitas de
+                  Maracay</small></div>
+            </div>
+            <div><span style="font-size:13.5px;color:var(--head)">Labrador chocolate</span><small
+                style="display:block;color:var(--muted)">Marrón chocolate</small></div>
+            <div style="font-size:20px">🐕</div>
+            <div style="font-size:13px;color:var(--head)">Grande</div>
+            <div><span class="stpill" style="background:#E8F2FA;color:#0F4C76">✅ Activo</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-an="AN-003" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+            <div class="who">
+              <div class="av" style="background:#E7EAF4">🐈</div>
+              <div><b>Pelusa</b><small>AN-004 · ♂ · 5 años</small></div>
+            </div>
+            <div><span style="font-size:13.5px;color:var(--head)">Siamés</span><small
+                style="display:block;color:var(--muted)">Crema con puntas</small></div>
+            <div style="font-size:20px">🐈</div>
+            <div style="font-size:13px;color:var(--head)">Pequeño</div>
+            <div><span class="stpill" style="background:#E8F2FA;color:#0F4C76">✅ Activo</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-an="AN-004" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.5fr 1fr .7fr .7fr 1fr 1.3fr">
+            <div class="who">
+              <div class="av" style="background:#E6F1E9">🐕</div>
+              <div><b>Max</b><small>AN-005 · ♂ · 2 años</small></div>
+            </div>
+            <div><span style="font-size:13.5px;color:var(--head)">Pitbull marrón</span><small
+                style="display:block;color:var(--muted)">Caramelo con blanco</small></div>
+            <div style="font-size:20px">🐕</div>
+            <div style="font-size:13px;color:var(--head)">Mediano</div>
+            <div><span class="stpill" style="background:#fdeee9;color:#c4562f">⏳ Pendiente</span>
+              <div
+                style="margin-top:4px;font-size:10.5px;font-weight:700;color:#0F4C76;background:#E8F2FA;padding:2px 6px;border-radius:6px;display:inline-block">
+                🩺 Rev. req.</div>
+            </div>
+            <div class="vtacts"><button class="bt-info" data-vm-an="AN-005" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button><button class="bt-approve" data-an-ap="AN-005" style="font-size:12px;padding:6px 10px">✅
+                Revisar</button></div>
+          </div>
+        </div>
+        <div class="pgn" id="anPgn" style="padding:12px 22px 8px"><button class="pgn-btn" disabled=""
+            data-pg="0">‹</button><button class="pgn-btn pgn-active" data-pg="1">1</button><button class="pgn-btn"
+            data-pg="2">2</button><button class="pgn-btn" data-pg="2">›</button><span class="pgn-info">1–5 de 10</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

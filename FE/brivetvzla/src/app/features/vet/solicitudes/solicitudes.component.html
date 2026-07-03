@@ -1,73 +1,125 @@
-<div class="vmain-head">
-  <div>
-    <h1>Solicitudes</h1>
-    <p>Revisión de reportes enviados por el público</p>
+<div class="vv active" id="vv-solicitudes">
+  <div class="vmain-head">
+    <div>
+      <h1>Solicitudes</h1>
+      <p>Revisión y gestión de reportes enviados por el público</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="solFilterTp" class="vf-select">
+        <option value="todos">Todos los tipos</option>
+        <option value="perdida">🔴 Perdidos</option>
+        <option value="encontrada">🟢 Encontrados</option>
+      </select>
+      <select id="solFilterSt" class="vf-select">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente">⏳ Pendientes</option>
+        <option value="activa">✅ Activas</option>
+        <option value="rechazada">❌ Rechazadas</option>
+      </select>
+    </div>
   </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <select class="vf-select" (change)="filterTp.set($any($event.target).value); page.set(1)">
-      <option value="">Todos los tipos</option>
-      <option value="P">🔴 Perdidos</option>
-      <option value="E">🟢 Encontrados</option>
-    </select>
-    <select class="vf-select" (change)="filterSt.set($any($event.target).value); page.set(1)">
-      <option value="">Todos los estados</option>
-      <option value="P">⏳ Pendientes</option>
-      <option value="A">✅ Activas</option>
-      <option value="R">❌ Rechazadas</option>
-    </select>
-  </div>
-</div>
-
-@if (result(); as data) {
-  <div class="panel">
+  <div class="panel" style="margin-top:0">
     <div class="panel-head">
-      <h3>Listado</h3>
-      <span class="pill-pending">{{ data.totalElements }} registros</span>
+      <h3>Listado de solicitudes</h3><span class="pill-pending" id="solCountPill">8 registros</span>
     </div>
     <div class="table-scroll">
-      <div class="vtable" style="min-width:760px">
-        <div class="vtrow vthead" style="grid-template-columns:1fr 1.6fr 1.6fr 1fr 1fr 1.4fr">
-          <span>#</span>
-          <span>Tipo</span>
-          <span>Contacto</span>
-          <span>Fecha</span>
-          <span>Estado</span>
-          <span style="text-align:right">Acciones</span>
+      <div class="vtable" style="min-width:800px">
+        <div class="vtrow vthead" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+          <div>Solicitante</div>
+          <div>Animal</div>
+          <div>Tipo</div>
+          <div>Fecha evento</div>
+          <div>Estado</div>
+          <div style="text-align:right">Acciones</div>
         </div>
-        @for (sol of data.content; track sol.so_cd_solicitud) {
-          <div class="vtrow" style="grid-template-columns:1fr 1.6fr 1.6fr 1fr 1fr 1.4fr">
-            <span style="color:#9aa49f;font-size:13px">#{{ sol.so_cd_solicitud }}</span>
-            <span class="stpill"
-              [style.background]="typeBg(sol.so_tp_solicitud)"
-              [style.color]="typeColor(sol.so_tp_solicitud)">
-              {{ typeLabel(sol.so_tp_solicitud) }}
-            </span>
-            <div>
-              <div style="font-weight:600;color:#33403c">{{ sol.contacto ? sol.contacto.co_nm_first_name + ' ' + sol.contacto.co_nm_last_name : '—' }}</div>
-              <div style="font-size:12px;color:#9aa49f">{{ sol.contacto?.co_de_phone ?? '' }}</div>
+        <div id="solRows">
+          <div class="vtrow" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+            <div class="who">
+              <div class="av" style="background:#E8F2FA;color:#0F4C76">MG</div>
+              <div><b>María González</b><small>Maracay, Aragua</small><small>0414-7821034</small></div>
             </div>
-            <span style="font-size:13px;color:#8a938d">{{ sol.so_dt_evento | slice:0:10 }}</span>
-            <span class="stpill"
-              [style.background]="statusBg(sol.so_st_solicitud)"
-              [style.color]="statusColor(sol.so_st_solicitud)">
-              {{ statusLabel(sol.so_st_solicitud) }}
-            </span>
-            <div class="trow" style="padding:0;border:none;justify-content:flex-end">
-              <button class="bt-info" (click)="openDetail(sol.so_cd_solicitud)">Ver →</button>
+            <div><b style="font-size:13.5px;color:var(--head)">Luna</b><small
+                style="display:block;color:var(--muted)">🐕 Perro · Mestizo mediano</small></div>
+            <div><span class="stpill" style="background:#fdecec;color:#DC4A4A">🔴 Perdida</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">SOL-001</div>
             </div>
+            <div style="font-size:13px;color:var(--soft)">24 jun · 07:30</div>
+            <div><span class="stpill" style="background:#e7f5ef;color:#1b7a55">✅ Activa</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-sol="SOL-001" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
           </div>
-        }
+          <div class="vtrow" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+            <div class="who">
+              <div class="av" style="background:#FBE7E0;color:#c4562f">JR</div>
+              <div><b>José Rodríguez</b><small>El Limón, Aragua</small><small>0424-5519302</small></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Sin nombre</b><small
+                style="display:block;color:var(--muted)">🐕 Perro · Mestizo marrón</small><span
+                style="background:#fdecec;color:#DC4A4A;font-size:11px;font-weight:700;padding:2px 6px;border-radius:20px;margin-left:5px">🚨</span>
+            </div>
+            <div><span class="stpill" style="background:#e7f5ef;color:#1b7a55">🟢 Encontrada</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">SOL-002</div>
+            </div>
+            <div style="font-size:13px;color:var(--soft)">24 jun · 09:15</div>
+            <div><span class="stpill" style="background:#fdeee9;color:#c4562f">⏳ Pendiente</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-sol="SOL-002" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button><button class="bt-approve" data-sol-ap="SOL-002"
+                style="font-size:12px;padding:6px 10px">✅</button><button class="bt-reject" data-sol-re="SOL-002"
+                style="font-size:12px;padding:6px 10px">✕</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+            <div class="who">
+              <div class="av" style="background:#E7EAF4;color:#3a5fb0">AP</div>
+              <div><b>Ana Pérez</b><small>Valencia, Carabobo</small><small>0412-3306781</small></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Michi</b><small
+                style="display:block;color:var(--muted)">🐈 Gato · Criollo atigrado</small></div>
+            <div><span class="stpill" style="background:#fdecec;color:#DC4A4A">🔴 Perdida</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">SOL-003</div>
+            </div>
+            <div style="font-size:13px;color:var(--soft)">23 jun · 14:00</div>
+            <div><span class="stpill" style="background:#e7f5ef;color:#1b7a55">✅ Activa</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-sol="SOL-003" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+            <div class="who">
+              <div class="av" style="background:#F3E8F1;color:#7E5BD0">LM</div>
+              <div><b>Luis Martínez</b><small>Los Teques, Miranda</small><small>0416-8841120</small></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Max</b><small style="display:block;color:var(--muted)">🐕
+                Perro · Pitbull marrón</small></div>
+            <div><span class="stpill" style="background:#fdecec;color:#DC4A4A">🔴 Perdida</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">SOL-004</div>
+            </div>
+            <div style="font-size:13px;color:var(--soft)">23 jun · 11:45</div>
+            <div><span class="stpill" style="background:#fdeee9;color:#c4562f">⏳ Pendiente</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-sol="SOL-004" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button><button class="bt-approve" data-sol-ap="SOL-004"
+                style="font-size:12px;padding:6px 10px">✅</button><button class="bt-reject" data-sol-re="SOL-004"
+                style="font-size:12px;padding:6px 10px">✕</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.6fr 1fr .8fr .8fr 1fr 1.5fr">
+            <div class="who">
+              <div class="av" style="background:#E6F1E9;color:#1b7a55">CD</div>
+              <div><b>Carmen Díaz</b><small>Caracas</small><small>0414-2290045</small></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Pelusa</b><small
+                style="display:block;color:var(--muted)">🐈 Gato · Siamés</small></div>
+            <div><span class="stpill" style="background:#fdecec;color:#DC4A4A">🔴 Perdida</span>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">SOL-005</div>
+            </div>
+            <div style="font-size:13px;color:var(--soft)">22 jun · 19:20</div>
+            <div><span class="stpill" style="background:#e7f5ef;color:#1b7a55">✅ Activa</span></div>
+            <div class="vtacts"><button class="bt-info" data-vm-sol="SOL-005" style="font-size:12px;padding:6px 10px">🔎
+                Detalle</button></div>
+          </div>
+        </div>
+        <div class="pgn" id="solPgn" style="padding:12px 22px 8px"><button class="pgn-btn" disabled=""
+            data-pg="0">‹</button><button class="pgn-btn pgn-active" data-pg="1">1</button><button class="pgn-btn"
+            data-pg="2">2</button><button class="pgn-btn" data-pg="2">›</button><span class="pgn-info">1–5 de 8</span>
+        </div>
       </div>
     </div>
-
-    <app-pagination
-      [page]="page()"
-      [total]="data.totalElements"
-      [perPage]="perPage"
-      (pageChange)="onPageChange($event)" />
   </div>
-}
-
-@if (selectedId()) {
-  <app-solicitud-detail [id]="selectedId()!" (close)="closeDetail()" />
-}
+</div>

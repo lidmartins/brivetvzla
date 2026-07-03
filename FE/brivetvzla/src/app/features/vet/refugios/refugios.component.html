@@ -1,39 +1,159 @@
-<div class="vmain-head">
-  <div>
-    <h1>Refugios</h1>
-    <p>Gestión de la red de refugios temporales</p>
+<div class="vv active" id="vv-refugios">
+  <div class="vmain-head">
+    <div>
+      <h1>Refugios</h1>
+      <p>Gestión de refugios temporales registrados</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="reFilterSt" class="vf-select">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente">⏳ Pendientes</option>
+        <option value="activo">✅ Activos</option>
+        <option value="lleno">🔴 Llenos</option>
+        <option value="inactivo">⚫ Inactivos</option>
+        <option value="rechazado">❌ Rechazados</option>
+      </select>
+      <select id="reFilterSp" class="vf-select">
+        <option value="todos">Todas las especies</option>
+        <option value="perro">🐕 Solo perros</option>
+        <option value="gato">🐈 Solo gatos</option>
+        <option value="ambos">🐾 Ambos</option>
+      </select>
+    </div>
   </div>
-</div>
-
-<div class="filterbar">
-  <div class="search">
-    <i>🔍</i>
-    <input type="text" placeholder="Buscar refugio…" (input)="onSearch($event)">
-  </div>
-  <span class="count">{{ filtered().length }} refugios</span>
-</div>
-
-<div class="panel" style="margin-top:16px">
-  <div class="table-scroll">
-    <div class="vtable">
-      <div class="vtrow vthead" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr">
-        <span>Refugio</span>
-        <span>Estado</span>
-        <span>Contacto</span>
-        <span>Perros</span>
-        <span>Gatos</span>
-        <span>Estado</span>
-      </div>
-      @for (r of filtered(); track r.name) {
-        <div class="vtrow" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr">
-          <b style="color:#33403c">{{ r.name }}</b>
-          <span style="color:#6b756f">{{ r.state }}</span>
-          <span style="color:#0F766E;font-weight:600">{{ r.contact }}</span>
-          <span>{{ r.dogs }}/{{ r.maxDogs }}</span>
-          <span>{{ r.cats }}/{{ r.maxCats }}</span>
-          <span class="stpill" [style.background]="r.stBg" [style.color]="r.stColor">{{ r.status }}</span>
+  <div class="panel" style="margin-top:0">
+    <div class="panel-head">
+      <h3>Listado de refugios</h3><span class="pill-pending" id="reCountPill">8 refugios</span>
+    </div>
+    <div class="table-scroll">
+      <div class="vtable" style="min-width:820px">
+        <div class="vtrow vthead" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+          <div>Refugio</div>
+          <div>Responsable</div>
+          <div>Especie</div>
+          <div>Cap. perros</div>
+          <div>Cap. gatos</div>
+          <div style="text-align:right">Estado / Acción</div>
         </div>
-      }
+        <div id="reRows">
+          <div class="vtrow" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+            <div><b style="font-size:14px;color:var(--head)">Refugio El Limón</b><small
+                style="display:block;color:var(--muted)">📍 El Limón, Maracay · Aragua</small>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px"><span class="sv">🍖 Comida</span><span
+                  class="sv">🩺 Veterinario</span><span class="sv">🚐 Transporte</span></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Mariela Torres</b><small
+                style="display:block;color:var(--muted)">0414-3221087</small></div>
+            <div style="font-size:13px">🐾 Ambos</div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">18 / 25</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:72%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">12 / 20</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:60%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div class="vtacts" style="flex-direction:column;align-items:flex-end;gap:5px"><span class="stpill"
+                style="background:#e7f5ef;color:#1b7a55">✅ Activo</span><button class="bt-info" data-vm-re="RE-001"
+                style="font-size:12px;padding:6px 10px">🔎 Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+            <div><b style="font-size:14px;color:var(--head)">Casa Esperanza Animal</b><small
+                style="display:block;color:var(--muted)">📍 Av. Bolívar · Valencia, Carabobo</small>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px"><span class="sv">🍖 Comida</span><span
+                  class="sv">🏡 Hogar Temporal</span></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Roberto Méndez</b><small
+                style="display:block;color:var(--muted)">0426-7745210</small></div>
+            <div style="font-size:13px">🐾 Ambos</div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">30 / 30</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:100%;background:#DC4A4A"></div>
+              </div>
+            </div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">8 / 15</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:53%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div class="vtacts" style="flex-direction:column;align-items:flex-end;gap:5px"><span class="stpill"
+                style="background:#fdecec;color:#DC4A4A">🔴 Lleno</span><button class="bt-info" data-vm-re="RE-002"
+                style="font-size:12px;padding:6px 10px">🔎 Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+            <div><b style="font-size:14px;color:var(--head)">Patitas de Maracay</b><small
+                style="display:block;color:var(--muted)">📍 Sector Centro · Maracay, Aragua</small>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px"><span class="sv">🍖 Comida</span><span
+                  class="sv">🩺 Veterinario</span><span class="sv">🏡 Hogar Temporal</span></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Gloria Castillo</b><small
+                style="display:block;color:var(--muted)">0412-5589031</small></div>
+            <div style="font-size:13px">🐾 Ambos</div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">9 / 15</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:60%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">14 / 18</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:78%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div class="vtacts" style="flex-direction:column;align-items:flex-end;gap:5px"><span class="stpill"
+                style="background:#e7f5ef;color:#1b7a55">✅ Activo</span><button class="bt-info" data-vm-re="RE-003"
+                style="font-size:12px;padding:6px 10px">🔎 Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+            <div><b style="font-size:14px;color:var(--head)">Albergue San Francisco</b><small
+                style="display:block;color:var(--muted)">📍 El Valle · Caracas</small>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px"><span class="sv">🍖 Comida</span><span
+                  class="sv">🩺 Veterinario</span><span class="sv">🚐 Transporte</span><span class="sv">🏡 Hogar
+                  Temporal</span></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Miguel Rondón</b><small
+                style="display:block;color:var(--muted)">0424-1198072</small></div>
+            <div style="font-size:13px">🐾 Ambos</div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">22 / 40</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:55%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">25 / 30</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:83%;background:#F26B4E"></div>
+              </div>
+            </div>
+            <div class="vtacts" style="flex-direction:column;align-items:flex-end;gap:5px"><span class="stpill"
+                style="background:#e7f5ef;color:#1b7a55">✅ Activo</span><button class="bt-info" data-vm-re="RE-004"
+                style="font-size:12px;padding:6px 10px">🔎 Detalle</button></div>
+          </div>
+          <div class="vtrow" style="grid-template-columns:1.8fr 1.2fr .9fr .9fr .9fr 1.3fr">
+            <div><b style="font-size:14px;color:var(--head)">Hogar Canino Mérida</b><small
+                style="display:block;color:var(--muted)">📍 La Pedregosa · Mérida</small>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px"><span class="sv">🍖 Comida</span></div>
+            </div>
+            <div><b style="font-size:13.5px;color:var(--head)">Isabel Suárez</b><small
+                style="display:block;color:var(--muted)">0416-6634421</small></div>
+            <div style="font-size:13px">🐕 Perros</div>
+            <div><span style="font-size:13px;font-weight:600;color:var(--head)">6 / 20</span>
+              <div class="cap-bar">
+                <div class="cap-fill" style="width:30%;background:#0F4C76"></div>
+              </div>
+            </div>
+            <div><span style="color:var(--muted);font-size:13px">N/A</span></div>
+            <div class="vtacts" style="flex-direction:column;align-items:flex-end;gap:5px"><span class="stpill"
+                style="background:#fdeee9;color:#c4562f">⏳ Pendiente</span><button class="bt-info" data-vm-re="RE-005"
+                style="font-size:12px;padding:6px 10px">🔎 Detalle</button><button class="bt-approve"
+                data-re-ap="RE-005" style="font-size:12px;padding:6px 10px">✅ Activar</button></div>
+          </div>
+        </div>
+        <div class="pgn" id="rePgn" style="padding:12px 22px 8px"><button class="pgn-btn" disabled=""
+            data-pg="0">‹</button><button class="pgn-btn pgn-active" data-pg="1">1</button><button class="pgn-btn"
+            data-pg="2">2</button><button class="pgn-btn" data-pg="2">›</button><span class="pgn-info">1–5 de 8</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

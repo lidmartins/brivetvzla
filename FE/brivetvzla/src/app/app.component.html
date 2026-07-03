@@ -1,7 +1,10 @@
+<!-- 
 <div class="embar">
-  🚨 Activación de emergencia: <strong>Terremoto · Temporales</strong> ·
-  <span class="lnk" routerLink="/refugios">Ver refugios →</span>
-</div>
+  <span>🚨</span>
+  <span><strong>Activación de emergencia:</strong> Terremoto · Temporales</span>
+  <span class="lnk" data-nav="shelters" routerLink="/refugios">Ver refugios →</span>
+</div> 
+-->
 
 <header>
   <div class="wrap hrow">
@@ -25,7 +28,7 @@
     </nav>
 
     <div class="hbtns">
-      <button class="btn-vet" routerLink="/login">🩺 Panel Vet</button>
+      <button class="btn-vet" [routerLink]="isLoggedIn() ? '/vet' : '/login'">🩺 Panel Vet</button>
       <button class="btn-report" (click)="openReportModal()">Reportar</button>
     </div>
   </div>

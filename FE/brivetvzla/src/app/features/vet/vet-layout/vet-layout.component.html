@@ -3,15 +3,18 @@
   <aside class="sidebar">
     <div class="sb-user">
       <div class="av">🩺</div>
-      <div><b>Dra. Patricia Salas</b><small>MV · Aragua</small></div>
+      <div>
+        <b>{{ user()?.nombre }} {{ user()?.apellido }}</b>
+        <small>{{ user()?.role?.nombre || 'Veterinario' }}</small>
+      </div>
     </div>
     <nav class="sb-menu">
-      <a class="sb-item" routerLink="dashboard"    routerLinkActive="active">📊 Panel</a>
-      <a class="sb-item" routerLink="solicitudes"  routerLinkActive="active">📥 Solicitudes</a>
-      <a class="sb-item" routerLink="animales"     routerLinkActive="active">🐾 Animales</a>
-      <a class="sb-item" routerLink="refugios"     routerLinkActive="active">🏠 Refugios</a>
+      <a class="sb-item" routerLink="dashboard" routerLinkActive="active">📊 Panel</a>
+      <a class="sb-item" routerLink="solicitudes" routerLinkActive="active">📥 Solicitudes @if (pendingCount() > 0) { <span class="b" id="sbBadge">{{ pendingCount() }}</span> }</a>
+      <a class="sb-item" routerLink="animales" routerLinkActive="active">🐾 Animales</a>
+      <a class="sb-item" routerLink="refugios" routerLinkActive="active">🏠 Refugios</a>
     </nav>
-    <button class="sb-exit" (click)="logout()">← Salir del panel</button>
+    <button class="sb-exit" data-nav="home" (click)="logout()">← Salir del panel</button>
   </aside>
   <main><router-outlet /></main>
 </div>

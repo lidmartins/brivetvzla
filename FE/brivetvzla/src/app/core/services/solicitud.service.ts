@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Solicitud } from '../../shared/models/solicitud.model';
@@ -15,8 +15,17 @@ export interface SolicitudFilter {
 @Injectable({ providedIn: 'root' })
 export class SolicitudService {
   private base = `${environment.apiUrl}/solicitudes`;
+  
+  pendingCount = signal<number>(0);
 
   constructor(private http: HttpClient) {}
+
+  refreshPendingCount() {
+    this.getVetSolicitudes('PENDIENTE').subscribe({
+      next: (list) => this.pendingCount.set(list.length),
+      error: () => {}
+    });
+  }
 
   getAll(filter: SolicitudFilter = {}): Observable<Page<Solicitud>> {
     let params = new HttpParams()
@@ -56,6 +65,32 @@ export class SolicitudService {
     }
     const url = `${environment.apiUrl}/solicitud`;
     return this.http.post<any>(url, formData);
+  }
+
+  getVetSolicitudes(estado?: string): Observable<any[]> {
+    let url = `${environment.apiUrl}/vet/solicitud`;
+    let params = new HttpParams();
+    if (estado) {
+      params = params.set('estado', estado);
+    }
+    return this.http.get<any[]>(url, { params });
+  }
+
+  getVetSolicitudById(id: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/vet/solicitud/${id}`);
+  }
+
+  updateVetSolicitudStatus(id: number, estado: string, observacionVet?: string): Observable<any> {
+    const url = `${environment.apiUrl}/vet/solicitud/${id}`;
+    const body: any = { estado };
+    if (observacionVet !== undefined) {
+      body.observacionVet = observacionVet;
+    }
+    return this.http.put<any>(url, body);
+  }
+
+  deleteVetSolicitud(id: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/vet/solicitud/${id}`);
   }
 }
 

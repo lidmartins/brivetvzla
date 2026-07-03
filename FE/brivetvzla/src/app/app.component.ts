@@ -1,6 +1,7 @@
 import { Component, inject, signal, ViewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 import { ReportModalComponent } from './features/public/modals/report-modal/report-modal.component';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +11,10 @@ import { ReportModalComponent } from './features/public/modals/report-modal/repo
 })
 export class AppComponent {
   private router     = inject(Router);
+  private authService = inject(AuthService);
 
   isHome = signal(false);
+  isLoggedIn = this.authService.isLoggedIn;
 
   constructor() {
     this.router.events.subscribe(() => {
