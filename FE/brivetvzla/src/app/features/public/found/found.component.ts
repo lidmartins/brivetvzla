@@ -67,6 +67,7 @@ export class FoundComponent implements OnInit {
       time: this.getRelativeTime(sol.fechaEvento || sol.createdAt),
       color: sol.mainPhotoUrl ? `url('${sol.mainPhotoUrl}')` : (sol.tipo === 'P' ? 'linear-gradient(140deg,#FEF2F2,#fdecec)' : 'linear-gradient(140deg,#F0FDF4,#e7f5ef)'),
       hasPhoto: !!sol.mainPhotoUrl,
+      mainPhotoUrl: sol.mainPhotoUrl || '',
       icon: isDog ? '🐕' : (isCat ? '🐈' : '🐾'),
       status: sol.tipo === 'P' ? 'Buscando' : (sol.estado === 'C' ? 'Reunido' : (sol.estado === 'T' ? 'Adoptado' : 'Encontrado')),
       colorDesc: sol.animal?.color || '',

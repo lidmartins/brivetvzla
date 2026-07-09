@@ -8,6 +8,7 @@ import { Component } from '@angular/core';
 })
 export class PetCardModalComponent {
   showModal = false;
+  showLightbox = false;
   pet: any = {};
 
   open(pet: any) {
@@ -17,6 +18,20 @@ export class PetCardModalComponent {
 
   closeModal() {
     this.showModal = false;
+    this.showLightbox = false;
+  }
+
+  openLightbox() {
+    if (this.pet.hasPhoto) {
+      this.showLightbox = true;
+    }
+  }
+
+  closeLightbox(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showLightbox = false;
   }
 
   formatRegistryId(id: number): string {
@@ -27,6 +42,13 @@ export class PetCardModalComponent {
   normalizePet(pet: any) {
     if (!pet) return {};
     if ('hasPhoto' in pet) {
+      if (!pet.mainPhotoUrl) {
+        if (pet.color && pet.color.startsWith("url('")) {
+          pet.mainPhotoUrl = pet.color.slice(5, -2);
+        } else if (pet.color && pet.color.startsWith("url(\"")) {
+          pet.mainPhotoUrl = pet.color.slice(5, -2);
+        }
+      }
       return pet;
     }
 
@@ -45,6 +67,7 @@ export class PetCardModalComponent {
       time: this.getRelativeTime(pet.fechaEvento || pet.createdAt),
       color: pet.mainPhotoUrl ? `url('${pet.mainPhotoUrl}')` : (pet.tipo === 'P' ? 'linear-gradient(140deg,#FEF2F2,#fdecec)' : 'linear-gradient(140deg,#F0FDF4,#e7f5ef)'),
       hasPhoto: !!pet.mainPhotoUrl,
+      mainPhotoUrl: pet.mainPhotoUrl || '',
       icon: isDog ? '🐕' : (isCat ? '🐈' : '🐾'),
       status: pet.tipo === 'P' ? 'Buscando' : (pet.estado === 'C' ? 'Reunido' : (pet.estado === 'T' ? 'Adoptado' : 'Encontrado')),
       colorDesc: pet.animal?.color || '',

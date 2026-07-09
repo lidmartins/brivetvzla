@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ReportModalComponent } from '../modals/report-modal/report-modal.component';
+import { PetCardModalComponent } from '../modals/pet-card-modal/pet-card-modal.component';
 import { SolicitudService } from '../../../core/services/solicitud.service';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ReportModalComponent],
+  imports: [RouterLink, ReportModalComponent, PetCardModalComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
   ];
 
   @ViewChild('reportModal') reportModal!: ReportModalComponent;
+  @ViewChild('petCardModal') petCardModal!: PetCardModalComponent;
 
   ngOnInit() {
     this.solicitudService.search().subscribe({

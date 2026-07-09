@@ -27,9 +27,9 @@
                 }
             </div>
             <div class="registry-id">{{ formatRegistryId(pet.id) }}</div>
-            <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px">
-                <div [style.background-image]="pet.color"
-                    style="flex:1;min-width:90px;max-width:150px;height:110px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:44px;background-size:cover;background-position:center;">
+            <div class="pet-image-container">
+                <div class="pet-image" [style.background-image]="pet.color" [class.pet-clickable]="pet.hasPhoto"
+                    (click)="openLightbox()">
                     @if (!pet.hasPhoto) {
                     {{ pet.icon || '🐾' }}
                     }
@@ -102,6 +102,15 @@
         <div class="modal-foot" style="justify-content:flex-end">
             <button class="m-next" id="pdBtn" style="background:var(--teal)" (click)="closeModal()">Cerrar</button>
         </div>
+    </div>
+</div>
+}
+
+@if (showLightbox) {
+<div class="lightbox-overlay" (click)="closeLightbox()">
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+        <img [src]="pet.mainPhotoUrl" class="lightbox-img" alt="Pet image fullscreen view">
+        <button class="lightbox-close" (click)="closeLightbox($event)">✕</button>
     </div>
 </div>
 }

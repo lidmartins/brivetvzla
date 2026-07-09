@@ -51,9 +51,9 @@
 
   <div class="grid">
     @for (a of filtered(); track a.id) {
-    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" style="cursor:pointer"
-      (click)="petCardModal.open(a)">
-      <div class="photo" [style.background-image]="a.color" style="background-size: cover; background-position: center;">
+    <div class="pet pet-clickable" data-petidx="0" data-pettype="lost" (click)="petCardModal.open(a)">
+      <div class="photo" [style.background-image]="a.color"
+        style="background-size: cover; background-position: center;">
         <span class="pw">🐾</span>
         <span class="badge lost">🔴 PERDIDO</span>
         <span class="mono" style="position:absolute;bottom:8px;right:11px;font-size:10px">foto · {{a.especie}}</span>
